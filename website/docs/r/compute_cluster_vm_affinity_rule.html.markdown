@@ -11,11 +11,8 @@ description: |-
 
 The `vsphere_compute_cluster_vm_affinity_rule` resource can be used to manage
 VM affinity rules in a cluster, either created by the
-[`vsphere_compute_cluster`][tf-vsphere-cluster-resource] resource or looked up
-by the [`vsphere_compute_cluster`][tf-vsphere-cluster-data-source] data source.
-
-[tf-vsphere-cluster-resource]: /docs/providers/vsphere/r/compute_cluster.html
-[tf-vsphere-cluster-data-source]: /docs/providers/vsphere/d/compute_cluster.html
+`vsphere_compute_cluster` resource or looked up
+by the `vsphere_compute_cluster` data source.
 
 This rule can be used to tell a set to virtual machines to run together on a
 single host within a cluster. When configured, DRS will make a best effort to
@@ -26,10 +23,8 @@ that would keep that from happening, depending on the value of the
 -> Keep in mind that this rule can only be used to tell VMs to run together on
 a _non-specific_ host - it can't be used to pin VMs to a host. For that, see
 the
-[`vsphere_compute_cluster_vm_host_rule`][tf-vsphere-cluster-vm-host-rule-resource]
+`vsphere_compute_cluster_vm_host_rule`
 resource.
-
-[tf-vsphere-cluster-vm-host-rule-resource]: /docs/providers/vsphere/r/compute_cluster_vm_host_rule.html
 
 ~> **NOTE:** This resource requires vCenter and is not available on direct ESXi
 connections.
@@ -39,13 +34,11 @@ connections.
 ## Example Usage
 
 The example below creates two virtual machines in a cluster using the
-[`vsphere_virtual_machine`][tf-vsphere-vm-resource] resource, creating the
+`vsphere_virtual_machine` resource, creating the
 virtual machines in the cluster looked up by the
-[`vsphere_compute_cluster`][tf-vsphere-cluster-data-source] data source. It
+`vsphere_compute_cluster` data source. It
 then creates an affinity rule for these two virtual machines, ensuring they
 will run on the same host whenever possible.
-
-[tf-vsphere-vm-resource]: /docs/providers/vsphere/r/virtual_machine.html
 
 ```hcl
 data "vsphere_datacenter" "dc" {
@@ -69,7 +62,7 @@ data "vsphere_network" "network" {
 
 resource "vsphere_virtual_machine" "vm" {
   count            = 2
-  name             = "terraform-test-${count.index}"
+  name             = "test-${count.index}"
   resource_pool_id = "${data.vsphere_compute_cluster.cluster.resource_pool_id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
 
@@ -88,7 +81,7 @@ resource "vsphere_virtual_machine" "vm" {
 }
 
 resource "vsphere_compute_cluster_vm_affinity_rule" "cluster_vm_affinity_rule" {
-  name                = "terraform-test-cluster-vm-affinity-rule"
+  name                = "test-cluster-vm-affinity-rule"
   compute_cluster_id  = "${data.vsphere_compute_cluster.cluster.id}"
   virtual_machine_ids = ["${vsphere_virtual_machine.vm.*.id}"]
 }
@@ -98,11 +91,9 @@ resource "vsphere_compute_cluster_vm_affinity_rule" "cluster_vm_affinity_rule" {
 
 The following arguments are supported:
 
-* `compute_cluster_id` - (Required) The [managed object reference
-  ID][docs-about-morefs] of the cluster to put the group in.  Forces a new
+* `compute_cluster_id` - (Required) The managed object reference
+  ID of the cluster to put the group in.  Forces a new
   resource if changed.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
 
 * `name` - (Required) The name of the rule. This must be unique in the cluster.
 * `virtual_machine_ids` - (Required) The UUIDs of the virtual machines to run
@@ -118,7 +109,7 @@ this when naming your rules.
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-a combination of the [managed object reference ID][docs-about-morefs] of the
+a combination of the managed object reference ID of the
 cluster, and the rule's key within the cluster configuration.
 
 ## Importing

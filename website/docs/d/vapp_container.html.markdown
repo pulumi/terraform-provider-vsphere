@@ -11,9 +11,7 @@ description: |-
 The `vsphere_vapp_container` data source can be used to discover the ID of a
 vApp container in vSphere. This is useful to fetch the ID of a vApp container
 that you want to use to create virtual machines in using the
-[`vsphere_virtual_machine`][docs-virtual-machine-resource] resource. 
-
-[docs-virtual-machine-resource]: /docs/providers/vsphere/r/virtual_machine.html
+`vsphere_virtual_machine` resource. 
 
 ## Example Usage
 
@@ -34,10 +32,8 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the vApp container. This can be a name or
   path.
-* `datacenter_id` - (Required) The [managed object reference
-  ID][docs-about-morefs] of the datacenter the vApp container is located in.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
+* `datacenter_id` - (Required) The managed object reference
+  ID of the datacenter the vApp container is located in.
 
 ## Attribute Reference
 

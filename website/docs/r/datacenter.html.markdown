@@ -12,9 +12,9 @@ description: |-
 Provides a VMware vSphere datacenter resource. This can be used as the primary
 container of inventory objects such as hosts and virtual machines.
 
-## Example Usages
+## Example Usage
 
-**Create datacenter on the root folder:**
+### Create datacenter on the root folder
 
 ```hcl
 resource "vsphere_datacenter" "prod_datacenter" {
@@ -22,7 +22,7 @@ resource "vsphere_datacenter" "prod_datacenter" {
 }
 ```
 
-**Create datacenter on a subfolder:**
+### Create datacenter on a subfolder
 
 ```hcl
 resource "vsphere_datacenter" "research_datacenter" {
@@ -39,10 +39,7 @@ The following arguments are supported:
   within the folder. Forces a new resource if changed.
 * `folder` - (Optional) The folder where the datacenter should be created.
   Forces a new resource if changed.
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
-
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
+* `tags` - (Optional) The IDs of any tags to attach to this resource.
 
 ~> **NOTE:** Tagging support is unsupported on direct ESXi connections and
 requires vCenter 6.0 or higher.
@@ -59,11 +56,9 @@ and require vCenter.
 
 ## Attribute Reference
 
-* `id` - The name of this datacenter. This will be changed to the [managed
-  object ID][docs-about-morefs] in v2.0.
-* `moid` - [Managed object ID][docs-about-morefs] of this datacenter.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
+* `id` - The name of this datacenter. This will be changed to the managed
+  object ID in v2.0.
+* `moid` - Managed object ID of this datacenter.
 
 ## Importing 
 

@@ -16,7 +16,7 @@ An essential component of a distributed, scalable VMware datacenter, the
 vSphere Distributed Virtual Switch (DVS) provides centralized management and
 monitoring of the networking configuration of all the hosts that are associated
 with the switch. In addition to adding port groups (see the
-[`vsphere_distributed_port_group`][distributed-port-group] resource) that can
+`vsphere_distributed_port_group` resource) that can
 be used as networks for virtual machines, a DVS can be configured to perform
 advanced high availability, traffic shaping, network monitoring, and more.
 
@@ -24,7 +24,6 @@ For an overview on vSphere networking concepts, see [this
 page][ref-vsphere-net-concepts]. For more information on vSphere DVS, see [this
 page][ref-vsphere-dvs].
 
-[distributed-port-group]: /docs/providers/vsphere/r/distributed_port_group.html
 [ref-vsphere-net-concepts]: https://docs.vmware.com/en/VMware-vSphere/6.5/com.vmware.vsphere.networking.doc/GUID-2B11DBB8-CB3C-4AFF-8885-EFEA0FC562F4.html
 [ref-vsphere-dvs]: https://docs.vmware.com/en/VMware-vSphere/6.5/com.vmware.vsphere.networking.doc/GUID-375B45C7-684C-4C51-BA3C-70E48DFABF04.html
 
@@ -68,7 +67,7 @@ data "vsphere_host" "host" {
 }
 
 resource "vsphere_distributed_virtual_switch" "dvs" {
-  name          = "terraform-test-dvs"
+  name          = "test-dvs"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 
   uplinks         = ["uplink1", "uplink2", "uplink3", "uplink4"]
@@ -99,12 +98,12 @@ of uplinks, and the name of the uplinks via the `uplinks` parameter.
 
 Note that if you change the uplink naming and count after creating the DVS, you
 may need to explicitly specify `active_uplinks` and `standby_uplinks` as these
-values are saved to Terraform state after creation, regardless of being
+values are saved to state after creation, regardless of being
 specified in config, and will drift if not modified, causing errors.
 
 ```hcl
 resource "vsphere_distributed_virtual_switch" "dvs" {
-  name          = "terraform-test-dvs"
+  name          = "test-dvs"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 
   uplinks         = ["tfup1", "tfup2"]
@@ -149,20 +148,13 @@ The following arguments are supported:
   create the DVS at the latest version supported by the version of vSphere
   being used. A DVS can be upgraded to another version, but cannot be
   downgraded.
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
-
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
+* `tags` - (Optional) The IDs of any tags to attach to this resource.
 
 ~> **NOTE:** Tagging support requires vCenter 6.0 or higher.
 
 * `custom_attributes` - (Optional) Map of custom attribute ids to attribute
-  value strings to set for virtual switch. See 
-  [here][docs-setting-custom-attributes] for a reference on how to set values 
-  for custom attributes.
-
-[docs-setting-custom-attributes]: /docs/providers/vsphere/r/custom_attribute.html#using-custom-attributes-in-a-supported-resource
-
+  value strings to set for virtual switch. 
+  
 ~> **NOTE:** Custom attributes are unsupported on direct ESXi connections 
 and require vCenter.
 
@@ -278,11 +270,10 @@ The options are:
 ### Default port group policy arguments
 
 The following arguments are shared with the
-[`vsphere_distributed_port_group`][distributed-port-group] resource. Setting
+`vsphere_distributed_port_group` resource. Setting
 them here defines a default policy here that will be inherited by other port
 groups on this switch that do not have these values otherwise overridden. Not
-defining these options in a DVS will infer defaults that can be seen in the
-Terraform state after the initial apply.
+defining these options in a DVS will infer defaults that can be seen in the state after the initial apply.
 
 Of particular note to a DVS are the [HA policy options](#ha-policy-options),
 which is where the `active_uplinks` and `standby_uplinks` options are

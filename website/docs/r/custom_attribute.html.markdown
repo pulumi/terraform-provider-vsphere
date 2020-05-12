@@ -23,30 +23,28 @@ and require vCenter.
 
 ## Example Usage
 
-This example creates a custom attribute named `terraform-test-attribute`. The 
+This example creates a custom attribute named `test-attribute`. The 
 resulting custom attribute can be assigned to VMs only.
 
 ```hcl
 resource "vsphere_custom_attribute" "attribute" {
-  name                = "terraform-test-attribute"
+  name                = "test-attribute"
   managed_object_type = "VirtualMachine"
 }
 ```
 
-## Using Custom Attributes in a Supported Resource
+### Using Custom Attributes in a Supported Resource
 
-Custom attributes can be set on vSphere resources in Terraform via the 
+Custom attributes can be set on vSphere resources via the 
 `custom_attributes` argument in any supported resource.
 
 The following example builds on the above example by creating a 
-[`vsphere_virtual_machine`][docs-virtual-machine-resource] and assigning a 
+`vsphere_virtual_machine` and assigning a 
 value to created custom attribute on it.
-
-[docs-virtual-machine-resource]: /docs/providers/vsphere/r/virtual_machine.html
 
 ```hcl
 resource "vsphere_custom_attribute" "attribute" {
-  name                = "terraform-test-attribute"
+  name                = "test-attribute"
   managed_object_type = "VirtualMachine"
 }
 

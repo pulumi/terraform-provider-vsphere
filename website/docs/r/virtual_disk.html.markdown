@@ -10,12 +10,9 @@ description: |-
 # vsphere\_virtual\_disk
 
 The `vsphere_virtual_disk` resource can be used to create virtual disks outside
-of any given [`vsphere_virtual_machine`][docs-vsphere-virtual-machine]
+of any given `vsphere_virtual_machine`
 resource. These disks can be attached to a virtual machine by creating a disk
-block with the [`attach`][docs-vsphere-virtual-machine-disk-attach] parameter.
-
-[docs-vsphere-virtual-machine]: /docs/providers/vsphere/r/virtual_machine.html
-[docs-vsphere-virtual-machine-disk-attach]: /docs/providers/vsphere/r/virtual_machine.html#attach
+block with the `attach` parameter.
 
 ## Example Usage
 
@@ -56,12 +53,10 @@ immutable and force a new resource if changed.
 
 ~> **NOTE:** `adapter_type` is **deprecated**: it does not dictate the type of
 controller that the virtual disk will be attached to on the virtual machine.
-Please see the [`scsi_type`][docs-vsphere-virtual-machine-scsi-type] parameter
+Please see the `scsi_type` parameter
 in the `vsphere_virtual_machine` resource for information on how to control
 disk controller types. This parameter will be removed in future versions of the
 vSphere provider.
-
-[docs-vsphere-virtual-machine-scsi-type]: /docs/providers/vsphere/r/virtual_machine.html#scsi_type
 
 * `create_directories` - (Optional) Tells the resource to create any
   directories that are a part of the `vmdk_path` parameter if they are missing.

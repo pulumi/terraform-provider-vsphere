@@ -25,15 +25,15 @@ requires vCenter 6.0 or higher.
 
 ## Example Usage
 
-This example creates a tag category named `terraform-test-category`, with
+This example creates a tag category named `test-category`, with
 single cardinality (meaning that only one tag in this category can be assigned
 to an object at any given time). Tags in this category can only be assigned to
 VMs and datastores.
 
 ```hcl
 resource "vsphere_tag_category" "category" {
-  name        = "terraform-test-category"
-  description = "Managed by Terraform"
+  name        = "test-category"
+  description = "Managed by Pulumi"
   cardinality = "SINGLE"
 
   associable_types = [

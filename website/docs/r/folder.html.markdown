@@ -22,13 +22,13 @@ as that folder exists.
 ## Example Usage
 
 The basic example below creates a virtual machine folder named
-`terraform-test-folder` in the default datacenter's VM hierarchy. 
+`test-folder` in the default datacenter's VM hierarchy. 
 
 ```hcl
 data "vsphere_datacenter" "dc" {}
 
 resource "vsphere_folder" "folder" {
-  path          = "terraform-test-folder"
+  path          = "test-folder"
   type          = "vm"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
@@ -37,7 +37,7 @@ resource "vsphere_folder" "folder" {
 ### Example with subfolders
 
 The below example builds off of the above by first creating a folder named
-`terraform-test-parent`, and then locating `terraform-test-folder` in that
+`test-parent`, and then locating `test-folder` in that
 folder. To ensure the parent is created first, we create an interpolation
 dependency off the parent's `path` attribute.
 
@@ -49,13 +49,13 @@ parent.
 data "vsphere_datacenter" "dc" {}
 
 resource "vsphere_folder" "parent" {
-  path          = "terraform-test-parent"
+  path          = "test-parent"
   type          = "vm"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
 resource "vsphere_folder" "folder" {
-  path          = "${vsphere_folder.parent.path}/terraform-test-folder"
+  path          = "${vsphere_folder.parent.path}/test-folder"
   type          = "vm"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
@@ -69,8 +69,8 @@ The following arguments are supported:
   the root of the type of folder you are creating, and the supplied datacenter.
   For example, given a default datacenter of `default-dc`, a folder of type
   `vm` (denoting a virtual machine folder), and a supplied folder of
-  `terraform-test-folder`, the resulting path would be
-  `/default-dc/vm/terraform-test-folder`.
+  `test-folder`, the resulting path would be
+  `/default-dc/vm/test-folder`.
 
 ~> **NOTE:** `path` can be modified - the resulting behavior is dependent on
 what section of `path` you are modifying. If you are modifying the parent (so
@@ -84,10 +84,7 @@ modifying the name (the part after the last `/`), your folder will be renamed.
 * `datacenter_id` - The ID of the datacenter the folder will be created in.
   Required for all folder types except for datacenter folders. Forces a new
   resource if changed.
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
-
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
+* `tags` - (Optional) The IDs of any tags to attach to this resource.
 
 ~> **NOTE:** Tagging support is unsupported on direct ESXi connections and
 requires vCenter 6.0 or higher.
@@ -104,9 +101,7 @@ and require vCenter.
 ## Attribute Reference
 
 The only attribute that this resource exports is the `id`, which is set to the
-[managed object ID][docs-about-morefs] of the folder.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
+managed object ID of the folder.
 
 ## Importing
 

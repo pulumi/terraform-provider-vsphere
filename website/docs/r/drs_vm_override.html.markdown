@@ -27,19 +27,15 @@ connections.
 ## Example Usage
 
 The example below creates a virtual machine in a cluster using the
-[`vsphere_virtual_machine`][tf-vsphere-vm-resource] resource, creating the
+`vsphere_virtual_machine` resource, creating the
 virtual machine in the cluster looked up by the
-[`vsphere_compute_cluster`][tf-vsphere-cluster-data-source] data source, but also
+`vsphere_compute_cluster` data source, but also
 pinning the VM to a host defined by the
-[`vsphere_host`][tf-vsphere-host-data-source] data source, which is assumed to
+`vsphere_host` data source, which is assumed to
 be a host within the cluster. To ensure that the VM stays on this host and does
 not need to be migrated back at any point in time, an override is entered using
 the `vsphere_drs_vm_override` resource that disables DRS for this virtual
 machine, ensuring that it does not move.
-
-[tf-vsphere-vm-resource]: /docs/providers/vsphere/r/virtual_machine.html
-[tf-vsphere-cluster-data-source]: /docs/providers/vsphere/d/compute_cluster.html
-[tf-vsphere-host-data-source]: /docs/providers/vsphere/d/host.html
 
 ```hcl
 data "vsphere_datacenter" "dc" {
@@ -67,7 +63,7 @@ data "vsphere_network" "network" {
 }
 
 resource "vsphere_virtual_machine" "vm" {
-  name             = "terraform-test"
+  name             = "test"
   resource_pool_id = "${data.vsphere_compute_cluster.cluster.resource_pool_id}"
   host_system_id   = "${data.vsphere_host.host.id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
@@ -97,11 +93,9 @@ resource "vsphere_drs_vm_override" "drs_vm_override" {
 
 The following arguments are supported:
 
-* `compute_cluster_id` - (Required) The [managed object reference
-  ID][docs-about-morefs] of the cluster to put the override in.  Forces a new
+* `compute_cluster_id` - (Required) The managed object reference
+  ID of the cluster to put the override in.  Forces a new
   resource if changed.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
 
 * `virtual_machine_id` - (Required) The UUID of the virtual machine to create
   the override for.  Forces a new resource if changed.
@@ -118,7 +112,7 @@ for both options.
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-a combination of the [managed object reference ID][docs-about-morefs] of the
+a combination of the managed object reference ID of the
 cluster, and the UUID of the virtual machine. This is used to look up the
 override on subsequent plan and apply operations after the override has been
 created.

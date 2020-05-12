@@ -28,10 +28,9 @@ connections.
 
 The following example sets up a datastore cluster and enables Storage DRS with
 the default settings. It then creates two NAS datastores using the
-[`vsphere_nas_datastore` resource][ref-tf-nas-datastore] and assigns them to
+`vsphere_nas_datastore` resource and assigns them to
 the datastore cluster.
 
-[ref-tf-nas-datastore]: /docs/providers/vsphere/r/nas_datastore.html
 
 ```hcl
 variable "hosts" {
@@ -51,29 +50,29 @@ data "vsphere_host" "esxi_hosts" {
 }
 
 resource "vsphere_datastore_cluster" "datastore_cluster" {
-  name          = "terraform-datastore-cluster-test"
+  name          = "datastore-cluster-test"
   datacenter_id = "${data.vsphere_datacenter.datacenter.id}"
   sdrs_enabled  = true
 }
 
 resource "vsphere_nas_datastore" "datastore1" {
-  name                 = "terraform-datastore-test1"
+  name                 = "datastore-test1"
   host_system_ids      = ["${data.vsphere_host.esxi_hosts.*.id}"]
   datastore_cluster_id = "${vsphere_datastore_cluster.datastore_cluster.id}"
 
   type         = "NFS"
   remote_hosts = ["nfs"]
-  remote_path  = "/export/terraform-test1"
+  remote_path  = "/export/test1"
 }
 
 resource "vsphere_nas_datastore" "datastore2" {
-  name                 = "terraform-datastore-test2"
+  name                 = "datastore-test2"
   host_system_ids      = ["${data.vsphere_host.esxi_hosts.*.id}"]
   datastore_cluster_id = "${vsphere_datastore_cluster.datastore_cluster.id}"
 
   type         = "NFS"
   remote_hosts = ["nfs"]
-  remote_path  = "/export/terraform-test2"
+  remote_path  = "/export/test2"
 }
 ```
 
@@ -82,23 +81,19 @@ resource "vsphere_nas_datastore" "datastore2" {
 The following arguments are supported:
 
 * `name` - (Required) The name of the datastore cluster.
-* `datacenter_id` - (Required) The [managed object ID][docs-about-morefs] of
+* `datacenter_id` - (Required) The managed object ID of
   the datacenter to create the datastore cluster in. Forces a new resource if
   changed.
 * `folder` - (Optional) The relative path to a folder to put this datastore
   cluster in.  This is a path relative to the datacenter you are deploying the
   datastore to.  Example: for the `dc1` datacenter, and a provided `folder` of
-  `foo/bar`, Terraform will place a datastore cluster named
-  `terraform-datastore-cluster-test` in a datastore folder located at
+  `foo/bar`, The provider will place a datastore cluster named
+  `datastore-cluster-test` in a datastore folder located at
   `/dc1/datastore/foo/bar`, with the final inventory path being
-  `/dc1/datastore/foo/bar/terraform-datastore-cluster-test`.
+  `/dc1/datastore/foo/bar/datastore-cluster-test`.
 * `sdrs_enabled` - (Optional) Enable Storage DRS for this datastore cluster.
   Default: `false`.
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
+* `tags` - (Optional) The IDs of any tags to attach to this resource.
 
 ~> **NOTE:** Tagging support requires vCenter 6.0 or higher.
 
@@ -179,7 +174,7 @@ datastore cluster.
 ~> **NOTE:** Setting `sdrs_free_space_threshold_mode` to `freeSpace` and using
 the `sdrs_free_space_threshold` setting requires vSphere 6.0 or higher and is
 ignored on older versions. Using these settings on older versions may result in
-spurious diffs in Terraform.
+spurious diffs.
 
 * `sdrs_free_space_utilization_difference` - (Optional) The threshold, in
   percent of used space, that storage DRS uses to make decisions to migrate VMs
@@ -205,12 +200,12 @@ require changing during basic operation:
 * `sdrs_load_balance_interval` - (Optional) The storage DRS poll interval, in
   minutes. Default: `480` minutes.
 * `sdrs_advanced_options` - (Optional) A key/value map of advanced Storage DRS
-  settings that are not exposed via Terraform or the vSphere client.
+  settings that are not exposed via the provider or the vSphere client.
 
 ## Attribute Reference
 
 The only computed attribute that is exported by this resource is the resource
-`id`, which is the the [managed object reference ID][docs-about-morefs] of the
+`id`, which is the the managed object reference ID of the
 datastore cluster.
 
 ## Importing

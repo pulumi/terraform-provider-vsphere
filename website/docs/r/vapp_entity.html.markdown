@@ -52,7 +52,7 @@ data "vsphere_datastore" "datastore" {
 }
 
 resource "vsphere_vapp_container" "vapp_container" {
-  name                    = "terraform-vapp-container-test"
+  name                    = "vapp-container-test"
   parent_resource_pool_id = "${data.vsphere_compute_cluster.compute_cluster.id}"
 }
 
@@ -63,7 +63,7 @@ resource "vsphere_vapp_entity" "vapp_entity" {
 }
 
 resource "vsphere_virtual_machine" "vm" {
-  name             = "terraform-virtual-machine-test"
+  name             = "virtual-machine-test"
   resource_pool_id = "${vsphere_vapp_container.vapp_container.id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
   num_cpus         = 2
@@ -85,9 +85,9 @@ resource "vsphere_virtual_machine" "vm" {
 
 The following arguments are supported:
 
-* `target_id` - (Required) [Managed object ID|docs-about-morefs] of the entity
+* `target_id` - (Required) Managed object ID of the entity
   to power on or power off. This can be a virtual machine or a vApp. 
-* `container_id` - (Required) [Managed object ID|docs-about-morefs] of the vApp
+* `container_id` - (Required) Managed object ID of the vApp
   container the entity is a member of.
 * `start_order` - (Optional) Order to start and stop target in vApp. Default: 1
 * `start_action` - (Optional) How to start the entity. Valid settings are none
@@ -105,14 +105,11 @@ The following arguments are supported:
   started when VMware Tools are ready instead of waiting for `start_delay`. This
   property has no effect for vApps. Default: false
 
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-the vApp entity's [managed object ID][docs-about-morefs] separated from the
-virtual machines [managed object ID][docs-about-morefs] by a colon.
+the vApp entity's managed object ID separated from the
+virtual machines managed object ID by a colon.
 
 ## Importing
 

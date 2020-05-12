@@ -11,19 +11,14 @@ description: |-
 
 The `vsphere_compute_cluster_vm_dependency_rule` resource can be used to manage
 VM dependency rules in a cluster, either created by the
-[`vsphere_compute_cluster`][tf-vsphere-cluster-resource] resource or looked up
-by the [`vsphere_compute_cluster`][tf-vsphere-cluster-data-source] data source.
-
-[tf-vsphere-cluster-resource]: /docs/providers/vsphere/r/compute_cluster.html
-[tf-vsphere-cluster-data-source]: /docs/providers/vsphere/d/compute_cluster.html
+`vsphere_compute_cluster` resource or looked up
+by the `vsphere_compute_cluster` data source.
 
 A virtual machine dependency rule applies to vSphere HA, and allows
 user-defined startup orders for virtual machines in the case of host failure.
 Virtual machines are supplied via groups, which can be managed via the
-[`vsphere_compute_cluster_vm_group`][tf-vsphere-cluster-vm-group-resource]
+`vsphere_compute_cluster_vm_group`
 resource.
-
-[tf-vsphere-cluster-vm-group-resource]: /docs/providers/vsphere/r/compute_cluster_vm_group.html
 
 ~> **NOTE:** This resource requires vCenter and is not available on direct ESXi
 connections.
@@ -31,15 +26,13 @@ connections.
 ## Example Usage
 
 The example below creates two virtual machine in a cluster using the
-[`vsphere_virtual_machine`][tf-vsphere-vm-resource] resource in a cluster
-looked up by the [`vsphere_compute_cluster`][tf-vsphere-cluster-data-source]
+`vsphere_virtual_machine` resource in a cluster
+looked up by the `vsphere_compute_cluster`
 data source. It then creates a group with this virtual machine. Two groups are created, each with one of the created VMs. Finally, a rule is created to ensure that `vm1` starts before `vm2`.
-
-[tf-vsphere-vm-resource]: /docs/providers/vsphere/r/virtual_machine.html
 
 -> Note how [`dependency_vm_group_name`](#dependency_vm_group_name) and
 [`vm_group_name`](#vm_group_name) are sourced off of the `name` attributes from
-the [`vsphere_compute_cluster_vm_group`][tf-vsphere-cluster-vm-group-resource]
+the `vsphere_compute_cluster_vm_group`
 resource. This is to ensure that the rule is not created before the groups
 exist, which may not possibly happen in the event that the names came from a
 "static" source such as a variable.
@@ -65,7 +58,7 @@ data "vsphere_network" "network" {
 }
 
 resource "vsphere_virtual_machine" "vm1" {
-  name             = "terraform-test1"
+  name             = "test1"
   resource_pool_id = "${data.vsphere_compute_cluster.cluster.resource_pool_id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
 
@@ -84,7 +77,7 @@ resource "vsphere_virtual_machine" "vm1" {
 }
 
 resource "vsphere_virtual_machine" "vm2" {
-  name             = "terraform-test2"
+  name             = "test2"
   resource_pool_id = "${data.vsphere_compute_cluster.cluster.resource_pool_id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
 
@@ -103,20 +96,20 @@ resource "vsphere_virtual_machine" "vm2" {
 }
 
 resource "vsphere_compute_cluster_vm_group" "cluster_vm_group1" {
-  name                = "terraform-test-cluster-vm-group1"
+  name                = "test-cluster-vm-group1"
   compute_cluster_id  = "${data.vsphere_compute_cluster.cluster.id}"
   virtual_machine_ids = ["${vsphere_virtual_machine.vm1.id}"]
 }
 
 resource "vsphere_compute_cluster_vm_group" "cluster_vm_group2" {
-  name                = "terraform-test-cluster-vm-group2"
+  name                = "test-cluster-vm-group2"
   compute_cluster_id  = "${data.vsphere_compute_cluster.cluster.id}"
   virtual_machine_ids = ["${vsphere_virtual_machine.vm2.id}"]
 }
 
 resource "vsphere_compute_cluster_vm_dependency_rule" "cluster_vm_dependency_rule" {
   compute_cluster_id       = "${data.vsphere_compute_cluster.cluster.id}"
-  name                     = "terraform-test-cluster-vm-dependency-rule"
+  name                     = "test-cluster-vm-dependency-rule"
   dependency_vm_group_name = "${vsphere_compute_cluster_vm_group.cluster_vm_group1.name}"
   vm_group_name            = "${vsphere_compute_cluster_vm_group.cluster_vm_group2.name}"
 }
@@ -126,11 +119,9 @@ resource "vsphere_compute_cluster_vm_dependency_rule" "cluster_vm_dependency_rul
 
 The following arguments are supported:
 
-* `compute_cluster_id` - (Required) The [managed object reference
-  ID][docs-about-morefs] of the cluster to put the group in.  Forces a new
+* `compute_cluster_id` - (Required) The managed object reference
+  ID of the cluster to put the group in.  Forces a new
   resource if changed.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
 
 * `name` - (Required) The name of the rule. This must be unique in the
   cluster.
@@ -153,7 +144,7 @@ this when naming your rules.
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-a combination of the [managed object reference ID][docs-about-morefs] of the
+a combination of the managed object reference ID of the
 cluster, and the rule's key within the cluster configuration.
 
 ## Importing

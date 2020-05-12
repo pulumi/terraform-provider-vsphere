@@ -3,18 +3,16 @@ layout: "vsphere"
 page_title: "VMware vSphere: vsphere_tag"
 sidebar_current: "docs-vsphere-data-source-tag-data-source"
 description: |-
-  Provides a vSphere tag data source. This can be used to reference tags not managed in Terraform.
+  Provides a vSphere tag data source. This can be used to reference tags not managed by this provider.
 ---
 
 # vsphere\_tag
 
 The `vsphere_tag` data source can be used to reference tags that are not
-managed by Terraform. Its attributes are exactly the same as the [`vsphere_tag`
-resource][resource-tag], and, like importing, the data source takes a name and
+managed by this provider. Its attributes are exactly the same as the `vsphere_tag`
+resource, and, like importing, the data source takes a name and
 category to search on. The `id` and other attributes are then populated with
 the data found by the search.
-
-[resource-tag]: /docs/providers/vsphere/r/tag.html
 
 ~> **NOTE:** Tagging support is unsupported on direct ESXi connections and
 requires vCenter 6.0 or higher.
@@ -23,11 +21,11 @@ requires vCenter 6.0 or higher.
 
 ```hcl
 data "vsphere_tag_category" "category" {
-  name = "terraform-test-category"
+  name = "test-category"
 }
 
 data "vsphere_tag" "tag" {
-  name        = "terraform-test-tag"
+  name        = "test-tag"
   category_id = "${data.vsphere_tag_category.category.id}"
 }
 ```
@@ -42,5 +40,5 @@ The following arguments are supported:
 ## Attribute Reference
 
 In addition to the `id` being exported, all of the fields that are available in
-the [`vsphere_tag` resource][resource-tag] are also populated. See that page
+the `vsphere_tag` resource are also populated. See that page
 for further details.

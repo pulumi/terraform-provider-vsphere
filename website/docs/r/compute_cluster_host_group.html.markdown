@@ -11,18 +11,14 @@ description: |-
 
 The `vsphere_compute_cluster_host_group` resource can be used to manage groups
 of hosts in a cluster, either created by the
-[`vsphere_compute_cluster`][tf-vsphere-cluster-resource] resource or looked up
-by the [`vsphere_compute_cluster`][tf-vsphere-cluster-data-source] data source.
+`vsphere_compute_cluster` resource or looked up
+by the `vsphere_compute_cluster` data source.
 
-[tf-vsphere-cluster-resource]: /docs/providers/vsphere/r/compute_cluster.html
-[tf-vsphere-cluster-data-source]: /docs/providers/vsphere/d/compute_cluster.html
 
 This resource mainly serves as an input to the
-[`vsphere_compute_cluster_vm_host_rule`][tf-vsphere-cluster-vm-host-rule-resource]
+`vsphere_compute_cluster_vm_host_rule`
 resource - see the documentation for that resource for further details on how
 to use host groups.
-
-[tf-vsphere-cluster-vm-host-rule-resource]: /docs/providers/vsphere/r/compute_cluster_vm_host_rule.html
 
 ~> **NOTE:** This resource requires vCenter and is not available on direct ESXi
 connections.
@@ -30,14 +26,6 @@ connections.
 ~> **NOTE:** vSphere DRS requires a vSphere Enterprise Plus license.
 
 ## Example Usage
-
-The example below is the exact same configuration as the
-[example][tf-vsphere-cluster-resource-example] in the
-[`vsphere_compute_cluster`][tf-vsphere-cluster-resource] resource, but in
-addition, it creates a host group with the same hosts that get put into the
-cluster.
-
-[tf-vsphere-cluster-resource-example]: /docs/providers/vsphere/r/compute_cluster.html#example-usage
 
 ```hcl
 variable "datacenter" {
@@ -63,7 +51,7 @@ data "vsphere_host" "hosts" {
 }
 
 resource "vsphere_compute_cluster" "compute_cluster" {
-  name            = "terraform-compute-cluster-test"
+  name            = "compute-cluster-test"
   datacenter_id   = "${data.vsphere_datacenter.dc.id}"
   host_system_ids = ["${data.vsphere_host.hosts.*.id}"]
 
@@ -74,7 +62,7 @@ resource "vsphere_compute_cluster" "compute_cluster" {
 }
 
 resource "vsphere_compute_cluster_host_group" "cluster_host_group" {
-  name                = "terraform-test-cluster-host-group"
+  name                = "test-cluster-host-group"
   compute_cluster_id  = "${vsphere_compute_cluster.compute_cluster.id}"
   host_system_ids     = ["${data.vsphere_host.hosts.*.id}"]
 }
@@ -86,26 +74,22 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the host group. This must be unique in the
   cluster. Forces a new resource if changed.
-* `compute_cluster_id` - (Required) The [managed object reference
-  ID][docs-about-morefs] of the cluster to put the group in.  Forces a new
+* `compute_cluster_id` - (Required) The managed object reference
+  ID of the cluster to put the group in.  Forces a new
   resource if changed.
 
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-
-* `host_system_ids` - (Optional) The [managed object IDs][docs-about-morefs] of
+* `host_system_ids` - (Optional) The managed object IDs of
   the hosts to put in the cluster.
 
 ~> **NOTE:** The namespace for cluster names on this resource (defined by the
 [`name`](#name) argument) is shared with the
-[`vsphere_compute_cluster_vm_group`][tf-vsphere-cluster-vm-group-resource]
+`vsphere_compute_cluster_vm_group`
 resource. Make sure your names are unique across both resources.
-
-[tf-vsphere-cluster-vm-group-resource]: /docs/providers/vsphere/r/compute_cluster_vm_group.html
 
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-a combination of the [managed object reference ID][docs-about-morefs] of the
+a combination of the managed object reference ID of the
 cluster, and the name of the host group.
 
 ## Importing

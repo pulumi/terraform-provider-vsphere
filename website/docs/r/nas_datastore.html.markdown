@@ -13,18 +13,16 @@ The `vsphere_nas_datastore` resource can be used to create and manage NAS
 datastores on an ESXi host or a set of hosts. The resource supports mounting
 NFS v3 and v4.1 shares to be used as datastores.
 
-~> **NOTE:** Unlike [`vsphere_vmfs_datastore`][resource-vmfs-datastore], a NAS
+~> **NOTE:** Unlike `vsphere_vmfs_datastore`, a NAS
 datastore is only mounted on the hosts you choose to mount it on. To mount on
 multiple hosts, you must specify each host that you want to add in the
 `host_system_ids` argument.
-
-[resource-vmfs-datastore]: /docs/providers/vsphere/r/vmfs_datastore.html
 
 ## Example Usage
 
 The following example would set up a NFS v3 share on 3 hosts connected through
 vCenter in the same datacenter - `esxi1`, `esxi2`, and `esxi3`. The remote host
-is named `nfs` and has `/export/terraform-test` exported.
+is named `nfs` and has `/export/test` exported.
 
 ```hcl
 variable "hosts" {
@@ -44,12 +42,12 @@ data "vsphere_host" "esxi_hosts" {
 }
 
 resource "vsphere_nas_datastore" "datastore" {
-  name            = "terraform-test"
+  name            = "test"
   host_system_ids = ["${data.vsphere_host.esxi_hosts.*.id}"]
 
   type         = "NFS"
   remote_hosts = ["nfs"]
-  remote_path  = "/export/terraform-test"
+  remote_path  = "/export/test"
 }
 ```
 
@@ -59,7 +57,7 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the datastore. Forces a new resource if
   changed.
-* `host_system_ids` - (Required) The [managed object IDs][docs-about-morefs] of
+* `host_system_ids` - (Required) The managed object IDs of
   the hosts to mount the datastore on.
 * `type` - (Optional) The type of NAS volume. Can be one of `NFS` (to denote
   v3) or `NFS41` (to denote NFS v4.1). Default: `NFS`. Forces a new resource if
@@ -79,29 +77,21 @@ The following arguments are supported:
 * `folder` - (Optional) The relative path to a folder to put this datastore in.
   This is a path relative to the datacenter you are deploying the datastore to.
   Example: for the `dc1` datacenter, and a provided `folder` of `foo/bar`,
-  Terraform will place a datastore named `terraform-test` in a datastore folder
+  The provider will place a datastore named `test` in a datastore folder
   located at `/dc1/datastore/foo/bar`, with the final inventory path being
-  `/dc1/datastore/foo/bar/terraform-test`. Conflicts with
+  `/dc1/datastore/foo/bar/test`. Conflicts with
   `datastore_cluster_id`.
-* `datastore_cluster_id` - (Optional) The [managed object
-  ID][docs-about-morefs] of a datastore cluster to put this datastore in.
+* `datastore_cluster_id` - (Optional) The managed object
+  ID of a datastore cluster to put this datastore in.
   Conflicts with `folder`.
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
-
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
+* `tags` - (Optional) The IDs of any tags to attach to this resource. 
 
 ~> **NOTE:** Tagging support is unsupported on direct ESXi connections and
 requires vCenter 6.0 or higher.
 
 * `custom_attributes` - (Optional) Map of custom attribute ids to attribute 
-  value strings to set on datasource resource. See 
-  [here][docs-setting-custom-attributes] for a reference on how to set values 
-  for custom attributes.
-
-[docs-setting-custom-attributes]: /docs/providers/vsphere/r/custom_attribute.html#using-custom-attributes-in-a-supported-resource
-
+  value strings to set on datasource resource. 
+  
 ~> **NOTE:** Custom attributes are unsupported on direct ESXi connections 
 and require vCenter.
 
@@ -109,7 +99,7 @@ and require vCenter.
 
 The following attributes are exported:
 
-* `id` - The [managed object reference ID][docs-about-morefs] of the datastore.
+* `id` - The managed object reference ID of the datastore.
 * `accessible` - The connectivity status of the datastore. If this is `false`,
   some other computed attributes may be out of date.
 * `capacity` - Maximum capacity of the datastore, in megabytes.

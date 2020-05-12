@@ -12,17 +12,16 @@ description: |-
 The `vsphere_host_virtual_switch` resource can be used to manage vSphere
 standard switches on an ESXi host. These switches can be used as a backing for
 standard port groups, which can be managed by the
-[`vsphere_host_port_group`][host-port-group] resource.
+`vsphere_host_port_group` resource.
 
 For an overview on vSphere networking concepts, see [this
 page][ref-vsphere-net-concepts].
 
-[host-port-group]: /docs/providers/vsphere/r/host_port_group.html
 [ref-vsphere-net-concepts]: https://docs.vmware.com/en/VMware-vSphere/6.5/com.vmware.vsphere.networking.doc/GUID-2B11DBB8-CB3C-4AFF-8885-EFEA0FC562F4.html
 
-## Example Usages
+## Example Usage
 
-**Create a virtual switch with one active and one standby NIC:**
+### Create a virtual switch with one active and one standby NIC
 
 ```hcl
 data "vsphere_datacenter" "datacenter" {
@@ -35,7 +34,7 @@ data "vsphere_host" "host" {
 }
 
 resource "vsphere_host_virtual_switch" "switch" {
-  name           = "vSwitchTerraformTest"
+  name           = "vSwitchTest"
   host_system_id = "${data.vsphere_host.host.id}"
 
   network_adapters = ["vmnic0", "vmnic1"]
@@ -45,7 +44,7 @@ resource "vsphere_host_virtual_switch" "switch" {
 }
 ```
 
-**Create a virtual switch with extra networking policy options:**
+### Create a virtual switch with extra networking policy options
 
 ```hcl
 data "vsphere_datacenter" "datacenter" {
@@ -58,7 +57,7 @@ data "vsphere_host" "host" {
 }
 
 resource "vsphere_host_virtual_switch" "switch" {
-  name           = "vSwitchTerraformTest"
+  name           = "vSwitchTest"
   host_system_id = "${data.vsphere_host.host.id}"
 
   network_adapters = ["vmnic0", "vmnic1"]
@@ -84,16 +83,14 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the virtual switch. Forces a new resource if
   changed.
-* `host_system_id` - (Required) The [managed object ID][docs-about-morefs] of
+* `host_system_id` - (Required) The managed object ID of
   the host to set the virtual switch up on. Forces a new resource if changed.
 * `mtu` - (Optional) The maximum transmission unit (MTU) for the virtual
   switch. Default: `1500`.
 * `number_of_ports` - (Optional) The number of ports to create with this
   virtual switch. Default: `128`.
 
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-
-~> **NOTE:** Changing the port count requires a reboot of the host. Terraform
+~> **NOTE:** Changing the port count requires a reboot of the host. This provider
 will not restart the host for you.
 
 ### Bridge Options
@@ -114,7 +111,7 @@ NICs:
 
 The following options relate to how network traffic is handled on this virtual
 switch. It also controls the NIC failover order. This subset of options is
-shared with the [`vsphere_host_port_group`][host-port-group] resource, in which
+shared with the `vsphere_host_port_group` resource, in which
 options can be omitted to ensure options are inherited from the switch
 configuration here.
 
@@ -171,9 +168,9 @@ probing (configured with [`check_beacon`](#check_beacon)).
 ## Attribute Reference
 
 The only exported attribute, other than the attributes above, is the `id` of
-the resource. This is set to an ID value unique to Terraform - the convention
+the resource. This is set to an ID value unique to the provider - the convention
 is a prefix, the host system ID, and the virtual switch name. An example would
-be `tf-HostVirtualSwitch:host-10:vSwitchTerraformTest`.
+be `tf-HostVirtualSwitch:host-10:vSwitchTest`.
 
 ## Importing
 

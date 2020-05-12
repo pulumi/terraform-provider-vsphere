@@ -42,7 +42,7 @@ data "vsphere_compute_cluster" "compute_cluster" {
 }
 
 resource "vsphere_resource_pool" "resource_pool" {
-  name                    = "terraform-resource-pool-test"
+  name                    = "resource-pool-test"
   parent_resource_pool_id = "${data.vsphere_compute_cluster.compute_cluster.resource_pool_id}"
 }
 ```
@@ -52,7 +52,7 @@ resource "vsphere_resource_pool" "resource_pool" {
 The following arguments are supported:
 
 * `name` - (Required) The name of the resource pool.
-* `parent_resource_pool_id` - (Required) The [managed object ID][docs-about-morefs]
+* `parent_resource_pool_id` - (Required) The managed object ID
   of the parent resource pool. This can be the root resource pool for a cluster
   or standalone host, or a resource pool itself. When moving a resource pool
   from one parent resource pool to another, both must share a common root
@@ -89,16 +89,12 @@ The following arguments are supported:
 * `memory_limit` - (Optional) The CPU utilization of a resource pool will not exceed
   this limit, even if there are available resources. Set to `-1` for unlimited.
   Default: `-1`
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
+* `tags` - (Optional) The IDs of any tags to attach to this resource. 
 
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-the [managed object ID][docs-about-morefs] of the resource pool.
+the managed object ID of the resource pool.
 
 ## Importing
 

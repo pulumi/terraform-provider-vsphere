@@ -22,22 +22,6 @@ page][ref-vsphere-datastore-clusters].
 
 ## Example Usage
 
-The example below builds on the [Storage DRS
-example][tf-vsphere-vm-storage-drs-example] in the `vsphere_virtual_machine`
-resource. However, rather than use the output of the
-[`vsphere_datastore_cluster` data
-source][tf-vsphere-datastore-cluster-data-source] for the location of the
-virtual machine, we instead get what is assumed to be a member datastore using
-the [`vsphere_datastore` data source][tf-vsphere-datastore-data-source] and put
-the virtual machine there instead. We then use the
-`vsphere_storage_drs_vm_override` resource to ensure that Storage DRS does not
-apply to this virtual machine, and hence the VM will never be migrated off of
-the datastore.
-
-[tf-vsphere-vm-storage-drs-example]: /docs/providers/vsphere/r/virtual_machine.html#using-storage-drs
-[tf-vsphere-datastore-cluster-data-source]: /docs/providers/vsphere/d/datastore_cluster.html
-[tf-vsphere-datastore-data-source]: /docs/providers/vsphere/d/datastore.html
-
 ```hcl
 data "vsphere_datacenter" "dc" {
   name = "dc1"
@@ -64,7 +48,7 @@ data "vsphere_network" "network" {
 }
 
 resource "vsphere_virtual_machine" "vm" {
-  name             = "terraform-test"
+  name             = "test"
   resource_pool_id = "${data.vsphere_resource_pool.pool.id}"
   datastore_id     = "${data.vsphere_datastore.member_datastore.id}"
 
@@ -93,11 +77,9 @@ resource "vsphere_storage_drs_vm_override" "drs_vm_override" {
 
 The following arguments are supported:
 
-* `datastore_cluster_id` - (Required) The [managed object reference
-  ID][docs-about-morefs] of the datastore cluster to put the override in.
+* `datastore_cluster_id` - (Required) The managed object reference
+  ID of the datastore cluster to put the override in.
   Forces a new resource if changed.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
 
 * `virtual_machine_id` - (Required) The UUID of the virtual machine to create
   the override for.  Forces a new resource if changed.
@@ -107,10 +89,8 @@ The following arguments are supported:
 * `sdrs_automation_level` - (Optional) Overrides any Storage DRS automation
   levels for this virtual machine. Can be one of `automated` or `manual`. When
   not specified, the datastore cluster's settings are used according to the
-  [specific SDRS subsystem][tf-vsphere-datastore-cluster-sdrs-levels].
-
-[tf-vsphere-datastore-cluster-sdrs-levels]: /docs/providers/vsphere/r/datastore_cluster.html#storage-drs-automation-options
-
+  specific SDRS subsystem.
+  
 * `sdrs_intra_vm_affinity` - (Optional) Overrides the intra-VM affinity setting
   for this virtual machine. When `true`, all disks for this virtual machine
   will be kept on the same datastore. When `false`, Storage DRS may locate
@@ -120,7 +100,7 @@ The following arguments are supported:
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-a combination of the [managed object reference ID][docs-about-morefs] of the
+a combination of the managed object reference ID of the
 datastore cluster, and the UUID of the virtual machine. This is used to look up
 the override on subsequent plan and apply operations after the override has
 been created.

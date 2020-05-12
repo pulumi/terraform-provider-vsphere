@@ -28,15 +28,12 @@ connections.
 
 The following example creates a compute cluster comprised of three hosts,
 making use of the
-[`vsphere_compute_cluster`][tf-vsphere-compute-cluster-resource] resource. DPM
+`vsphere_compute_cluster` resource. DPM
 will be disabled in the cluster as it is the default setting, but we override
 the setting of the first host referenced by the
-[`vsphere_host`][tf-vsphere-host-data-source] data source (`esxi1`) by using
+`vsphere_host` data source (`esxi1`) by using
 the `vsphere_dpm_host_override` resource so it will be powered off when the
 cluster does not need it to service virtual machines.
-
-[tf-vsphere-compute-cluster-resource]: /docs/providers/vsphere/r/compute_cluster.html
-[tf-vsphere-host-data-source]: /docs/providers/vsphere/d/host.html
 
 ```hcl
 variable "datacenter" {
@@ -62,7 +59,7 @@ data "vsphere_host" "hosts" {
 }
 
 resource "vsphere_compute_cluster" "compute_cluster" {
-  name            = "terraform-compute-cluster-test"
+  name            = "compute-cluster-test"
   datacenter_id   = "${data.vsphere_datacenter.dc.id}"
   host_system_ids = ["${data.vsphere_host.hosts.*.id}"]
 
@@ -82,13 +79,11 @@ resource "vsphere_dpm_host_override" "dpm_host_override" {
 
 The following arguments are supported:
 
-* `compute_cluster_id` - (Required) The [managed object reference
-  ID][docs-about-morefs] of the cluster to put the override in.  Forces a new
+* `compute_cluster_id` - (Required) The managed object reference
+  ID of the cluster to put the override in.  Forces a new
   resource if changed.
 
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-
-* `host_system_ids` - (Optional) The [managed object ID][docs-about-morefs] of
+* `host_system_ids` - (Optional) The managed object ID of
   the host to create the override for.
 * `dpm_enabled` - (Optional) Enable DPM support for this host. Default:
   `false`. 
@@ -103,7 +98,7 @@ for both options.
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-a combination of the [managed object reference ID][docs-about-morefs] of the
+a combination of the managed object reference ID of the
 cluster, and the managed object reference ID of the host. This is used to look
 up the override on subsequent plan and apply operations after the override has
 been created.

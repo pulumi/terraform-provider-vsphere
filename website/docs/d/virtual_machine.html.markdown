@@ -11,10 +11,8 @@ description: |-
 The `vsphere_virtual_machine` data source can be used to find the UUID of an
 existing virtual machine or template. Its most relevant purpose is for finding
 the UUID of a template to be used as the source for cloning into a new
-[`vsphere_virtual_machine`][docs-virtual-machine-resource] resource. It also
+`vsphere_virtual_machine` resource. It also
 reads the guest ID so that can be supplied as well.
-
-[docs-virtual-machine-resource]: /docs/providers/vsphere/r/virtual_machine.html
 
 ## Example Usage
 
@@ -35,25 +33,21 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the virtual machine. This can be a name or
   path.
-* `datacenter_id` - (Optional) The [managed object reference
-  ID][docs-about-morefs] of the datacenter the virtual machine is located in.
+* `datacenter_id` - (Optional) The managed object reference
+  ID of the datacenter the virtual machine is located in.
   This can be omitted if the search path used in `name` is an absolute path.
   For default datacenters, use the `id` attribute from an empty
   `vsphere_datacenter` data source.
 * `scsi_controller_scan_count` - (Optional) The number of SCSI controllers to
   scan for disk attributes and controller types on. Default: `1`.
 
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-
 ~> **NOTE:** For best results, ensure that all the disks on any templates you
 use with this data source reside on the primary controller, and leave this
 value at the default. See the
-[`vsphere_virtual_machine`][docs-virtual-machine-resource] resource
+`vsphere_virtual_machine` resource
 documentation for the significance of this setting, specifically the
-[additional requirements and notes for
-cloning][docs-virtual-machine-resource-cloning] section.
-
-[docs-virtual-machine-resource-cloning]: /docs/providers/vsphere/r/virtual_machine.html#additional-requirements-and-notes-for-cloning
+`additional requirements and notes for
+cloning` section.
 
 ## Attribute Reference
 
@@ -91,4 +85,4 @@ The following attributes are exported:
 ~> **NOTE:** Keep in mind when using the results of `scsi_type` and
 `network_interface_types`, that the `vsphere_virtual_machine` resource only
 supports a subset of the types returned from this data source. See the
-[resource docs][docs-virtual-machine-resource] for more details.
+resource docs for more details.

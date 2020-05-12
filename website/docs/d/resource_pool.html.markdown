@@ -11,9 +11,7 @@ description: |-
 The `vsphere_resource_pool` data source can be used to discover the ID of a
 resource pool in vSphere. This is useful to fetch the ID of a resource pool
 that you want to use to create virtual machines in using the
-[`vsphere_virtual_machine`][docs-virtual-machine-resource] resource. 
-
-[docs-virtual-machine-resource]: /docs/providers/vsphere/r/virtual_machine.html
+`vsphere_virtual_machine` resource. 
 
 ## Example Usage
 
@@ -31,10 +29,8 @@ data "vsphere_resource_pool" "pool" {
 ### Specifying the root resource pool for a standalone host
 
 -> **NOTE:** Fetching the root resource pool for a cluster can now be done
-directly via the [`vsphere_compute_cluster`][docs-compute-cluster-data-source]
+directly via the `vsphere_compute_cluster`
 data source.
-
-[docs-compute-cluster-data-source]: /docs/providers/vsphere/d/compute_cluster.html
 
 All compute resources in vSphere (clusters, standalone hosts, and standalone
 ESXi) have a resource pool, even if one has not been explicitly created. This
@@ -59,13 +55,11 @@ The following arguments are supported:
 
 * `name` - (Optional) The name of the resource pool. This can be a name or
   path. This is required when using vCenter.
-* `datacenter_id` - (Optional) The [managed object reference
-  ID][docs-about-morefs] of the datacenter the resource pool is located in.
+* `datacenter_id` - (Optional) The managed object reference
+  ID of the datacenter the resource pool is located in.
   This can be omitted if the search path used in `name` is an absolute path.
   For default datacenters, use the id attribute from an empty
   `vsphere_datacenter` data source.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
 
 ~> **Note when using with standalone ESXi:** When using ESXi without vCenter,
 you don't have to specify either attribute to use this data source. An empty

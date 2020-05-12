@@ -42,9 +42,7 @@ an already provisioned disk is currently not supported (but may be in future
 versions of this resource).
 
 ~> **NOTE:** You cannot decrease the size of a datastore. If the resource
-detects disks removed from the configuration, Terraform will give an error. To
-reduce the size of the datastore, the resource needs to be re-created - run
-[`terraform taint`][cmd-taint] to taint the resource so it can be re-created.
+detects disks removed from the configuration, the provider will give an error. 
 
 [cmd-taint]: /docs/commands/taint.html
 
@@ -70,7 +68,7 @@ data "vsphere_host" "esxi_host" {
 }
 
 resource "vsphere_vmfs_datastore" "datastore" {
-  name           = "terraform-test"
+  name           = "test"
   host_system_id = "${data.vsphere_host.esxi_host.id}"
 
   disks = [
@@ -84,7 +82,7 @@ resource "vsphere_vmfs_datastore" "datastore" {
 ### Auto-detection of disks via `vsphere_vmfs_disks`
 
 The following example makes use of the
-[`vsphere_vmfs_disks`][data-source-vmfs-disks] data source to auto-detect
+`vsphere_vmfs_disks` data source to auto-detect
 exported iSCSI LUNS matching a certain NAA vendor ID (in this case, LUNs
 exported from a [NetApp][ext-netapp]). These discovered disks are then loaded
 into `vsphere_vmfs_datastore`. The datastore is also placed in the
@@ -109,7 +107,7 @@ data "vsphere_vmfs_disks" "available" {
 }
 
 resource "vsphere_vmfs_datastore" "datastore" {
-  name           = "terraform-test"
+  name           = "test"
   host_system_id = "${data.vsphere_host.esxi_host.id}"
   folder         = "datastore-folder"
 
@@ -123,7 +121,7 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the datastore. Forces a new resource if
   changed.
-* `host_system_id` - (Required) The [managed object ID][docs-about-morefs] of
+* `host_system_id` - (Required) The managed object ID of
   the host to set the datastore up on. Note that this is not necessarily the
   only host that the datastore will be set up on - see
   [here](#auto-mounting-of-datastores-within-vcenter) for more info. Forces a
@@ -132,29 +130,21 @@ The following arguments are supported:
 * `folder` - (Optional) The relative path to a folder to put this datastore in.
   This is a path relative to the datacenter you are deploying the datastore to.
   Example: for the `dc1` datacenter, and a provided `folder` of `foo/bar`,
-  Terraform will place a datastore named `terraform-test` in a datastore folder
+  The provider will place a datastore named `test` in a datastore folder
   located at `/dc1/datastore/foo/bar`, with the final inventory path being
-  `/dc1/datastore/foo/bar/terraform-test`. Conflicts with
+  `/dc1/datastore/foo/bar/test`. Conflicts with
   `datastore_cluster_id`.
-* `datastore_cluster_id` - (Optional) The [managed object
-  ID][docs-about-morefs] of a datastore cluster to put this datastore in.
+* `datastore_cluster_id` - (Optional) The managed object
+  ID of a datastore cluster to put this datastore in.
   Conflicts with `folder`.
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
-
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
+* `tags` - (Optional) The IDs of any tags to attach to this resource. 
 
 ~> **NOTE:** Tagging support is unsupported on direct ESXi connections and
 requires vCenter 6.0 or higher.
 
 * `custom_attributes` (Optional) Map of custom attribute ids to attribute 
-   value string to set on datastore resource. See 
-   [here][docs-setting-custom-attributes] for a reference on how to set values 
-   for custom attributes.
-
-[docs-setting-custom-attributes]: /docs/providers/vsphere/r/custom_attribute.html#using-custom-attributes-in-a-supported-resource
-
+   value string to set on datastore resource. 
+   
 ~> **NOTE:** Custom attributes are unsupported on direct ESXi connections 
 and require vCenter.
 
@@ -162,7 +152,7 @@ and require vCenter.
 
 The following attributes are exported:
 
-* `id` - The [managed object reference ID][docs-about-morefs] of the datastore.
+* `id` - The managed object reference ID of the datastore.
 * `accessible` - The connectivity status of the datastore. If this is `false`,
   some other computed attributes may be out of date.
 * `capacity` - Maximum capacity of the datastore, in megabytes.

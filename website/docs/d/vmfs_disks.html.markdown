@@ -10,10 +10,9 @@ description: |-
 
 The `vsphere_vmfs_disks` data source can be used to discover the storage
 devices available on an ESXi host. This data source can be combined with the
-[`vsphere_vmfs_datastore`][data-source-vmfs-datastore] resource to create VMFS
+`vsphere_vmfs_datastore` resource to create VMFS
 datastores based off a set of discovered disks.
 
-[data-source-vmfs-datastore]: /docs/providers/vsphere/r/vmfs_datastore.html
 
 ## Example Usage
 
@@ -38,11 +37,8 @@ data "vsphere_vmfs_disks" "available" {
 
 The following arguments are supported:
 
-* `host_system_id` - (Required) The [managed object ID][docs-about-morefs] of
+* `host_system_id` - (Required) The managed object ID of
   the host to look for disks on.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-
 * `rescan` - (Optional) Whether or not to rescan storage adapters before
   searching for disks. This may lengthen the time it takes to perform the
   search. Default: `false`.

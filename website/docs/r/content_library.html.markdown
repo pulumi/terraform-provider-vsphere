@@ -19,8 +19,6 @@ connections.
 
 The example below creates a Content Library using `datastore1` as the storage backing.
 
-[tf-vsphere-vm-resource]: /docs/providers/vsphere/r/virtual_machine.html
-
 ```hcl
 data "vsphere_datacenter" "dc" {
   name = "dc1"
@@ -43,17 +41,14 @@ resource "vsphere_content_library" "library" {
 The following arguments are supported:
 
 * `name` - (Required) The name of the Content Library.
-* `storage_backing` - (Required) The [managed object reference ID][docs-about-morefs] on which to store Content Library
+* `storage_backing` - (Required) The managed object reference ID on which to store Content Library
   items.
 * `description` - (Optional) A description of the Content Library.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-
 
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-a combination of the [managed object reference ID][docs-about-morefs] of the
+a combination of the managed object reference ID of the
 cluster, and the name of the virtual machine group.
 
 ## Importing

@@ -22,20 +22,18 @@ requires vCenter 6.0 or higher.
 
 ## Example Usage
 
-This example creates a tag named `terraform-test-tag`. This tag is assigned the
-`terraform-test-category` category, which was created by the
-[`vsphere_tag_category` resource][docs-tag-category-resource]. The resulting
+This example creates a tag named `test-tag`. This tag is assigned the
+`test-category` category, which was created by the
+`vsphere_tag_category` resource. The resulting
 tag can be assigned to VMs and datastores only, and can be the only value in
 the category that can be assigned, as per the restrictions defined by the
 category.
 
-[docs-tag-category-resource]: /docs/providers/vsphere/r/tag_category.html
-
 ```hcl
 resource "vsphere_tag_category" "category" {
-  name        = "terraform-test-category"
+  name        = "test-category"
   cardinality = "SINGLE"
-  description = "Managed by Terraform"
+  description = "Managed by Pulumi"
 
   associable_types = [
     "VirtualMachine",
@@ -44,28 +42,26 @@ resource "vsphere_tag_category" "category" {
 }
 
 resource "vsphere_tag" "tag" {
-  name        = "terraform-test-tag"
+  name        = "test-tag"
   category_id = "${vsphere_tag_category.category.id}"
-  description = "Managed by Terraform"
+  description = "Managed by Pulumi"
 }
 ```
 
-## Using Tags in a Supported Resource
+### Using Tags in a Supported Resource
 
-Tags can be applied to vSphere resources in Terraform via the `tags` argument
+Tags can be applied to vSphere resources via the `tags` argument
 in any supported resource.
 
 The following example builds on the above example by creating a
-[`vsphere_virtual_machine`][docs-virtual-machine-resource] and applying the
+`vsphere_virtual_machine` and applying the
 created tag to it:
-
-[docs-virtual-machine-resource]: /docs/providers/vsphere/r/virtual_machine.html
 
 ```hcl
 resource "vsphere_tag_category" "category" {
-  name        = "terraform-test-category"
+  name        = "test-category"
   cardinality = "SINGLE"
-  description = "Managed by Terraform"
+  description = "Managed by Pulumi"
 
   associable_types = [
     "VirtualMachine",
@@ -74,9 +70,9 @@ resource "vsphere_tag_category" "category" {
 }
 
 resource "vsphere_tag" "tag" {
-  name        = "terraform-test-tag"
+  name        = "test-tag"
   category_id = "${vsphere_tag_category.category.id}"
-  description = "Managed by Terraform"
+  description = "Managed by Pulumi"
 }
 
 resource "vsphere_virtual_machine" "web" {

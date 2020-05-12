@@ -10,10 +10,8 @@ description: |-
 
 The `vsphere_datacenter` data source can be used to discover the ID of a
 vSphere datacenter. This can then be used with resources or data sources that
-require a datacenter, such as the [`vsphere_host`][data-source-vsphere-host]
+require a datacenter, such as the `vsphere_host`
 data source.
-
-[data-source-vsphere-host]: /docs/providers/vsphere/d/host.html
 
 ## Example Usage
 
@@ -37,7 +35,5 @@ Hence, the `name` attribute is completely ignored.
 
 ## Attribute Reference
 
-The only exported attribute is `id`, which is the [managed object
-ID][docs-about-morefs] of this datacenter.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
+The only exported attribute is `id`, which is the managed object
+ID of this datacenter.

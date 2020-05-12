@@ -34,12 +34,10 @@ connections.
 ## Example Usage
 
 The example below creates two virtual machines in a cluster using the
-[`vsphere_virtual_machine`][tf-vsphere-vm-resource] resource, creating the
+`vsphere_virtual_machine` resource, creating the
 virtual machine in the cluster looked up by the
-[`vsphere_compute_cluster`][tf-vsphere-cluster-data-source] data source. It
+`vsphere_compute_cluster` data source. It
 then creates a group from these two virtual machines.
-
-[tf-vsphere-vm-resource]: /docs/providers/vsphere/r/virtual_machine.html
 
 ```hcl
 data "vsphere_datacenter" "dc" {
@@ -63,7 +61,7 @@ data "vsphere_network" "network" {
 
 resource "vsphere_virtual_machine" "vm" {
   count            = 2
-  name             = "terraform-test-${count.index}"
+  name             = "test-${count.index}"
   resource_pool_id = "${data.vsphere_compute_cluster.cluster.resource_pool_id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
 
@@ -82,7 +80,7 @@ resource "vsphere_virtual_machine" "vm" {
 }
 
 resource "vsphere_compute_cluster_vm_group" "cluster_vm_group" {
-  name                = "terraform-test-cluster-vm-group"
+  name                = "test-cluster-vm-group"
   compute_cluster_id  = "${data.vsphere_compute_cluster.cluster.id}"
   virtual_machine_ids = ["${vsphere_virtual_machine.vm.*.id}"]
 }
@@ -94,26 +92,21 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the VM group. This must be unique in the
   cluster. Forces a new resource if changed.
-* `compute_cluster_id` - (Required) The [managed object reference
-  ID][docs-about-morefs] of the cluster to put the group in.  Forces a new
+* `compute_cluster_id` - (Required) The managed object reference
+  ID of the cluster to put the group in.  Forces a new
   resource if changed.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-
 * `virtual_machine_ids` - (Required) The UUIDs of the virtual machines in this
   group.
 
 ~> **NOTE:** The namespace for cluster names on this resource (defined by the
 [`name`](#name) argument) is shared with the
-[`vsphere_compute_cluster_host_group`][tf-vsphere-cluster-host-group-resource]
+`vsphere_compute_cluster_host_group`
 resource. Make sure your names are unique across both resources.
-
-[tf-vsphere-cluster-host-group-resource]: /docs/providers/vsphere/r/compute_cluster_host_group.html
 
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-a combination of the [managed object reference ID][docs-about-morefs] of the
+a combination of the managed object reference ID of the
 cluster, and the name of the virtual machine group.
 
 ## Importing

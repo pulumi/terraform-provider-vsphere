@@ -42,7 +42,7 @@ data "vsphere_compute_cluster" "compute_cluster" {
 }
 
 resource "vsphere_vapp_container" "vapp_container" {
-  name                    = "terraform-vapp-container-test"
+  name                    = "vapp-container-test"
   parent_resource_pool_id = "${data.vsphere_compute_cluster.compute_cluster.id}"
 }
 ```
@@ -82,12 +82,12 @@ data "vsphere_datastore" "datastore" {
 }
 
 resource "vsphere_vapp_container" "vapp_container" {
-  name                    = "terraform-vapp-container-test"
+  name                    = "vapp-container-test"
   parent_resource_pool_id = "${data.vsphere_compute_cluster.compute_cluster.id}"
 }
 
 resource "vsphere_virtual_machine" "vm" {
-  name             = "terraform-virutal-machine-test"
+  name             = "virutal-machine-test"
   resource_pool_id = "${vsphere_vapp_container.vapp_container.id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
   num_cpus         = 2
@@ -110,12 +110,12 @@ resource "vsphere_virtual_machine" "vm" {
 The following arguments are supported:
 
 * `name` - (Required) The name of the vApp container.
-* `parent_resource_pool_id` - (Required) The [managed object ID][docs-about-morefs]
+* `parent_resource_pool_id` - (Required) The managed object ID
   of the parent resource pool. This can be the root resource pool for a cluster
   or standalone host, or a resource pool itself. When moving a vApp container
   from one parent resource pool to another, both must share a common root
   resource pool or the move will fail.
-* `parent_folder_id` - (Optional) The [managed object ID][docs-about-morefs] of
+* `parent_folder_id` - (Optional) The managed object ID of
   the vApp container's parent folder.
 * `cpu_share_level` - (Optional) The CPU allocation level. The level is a
   simplified view of shares. Levels map to a pre-determined set of numeric
@@ -151,16 +151,12 @@ The following arguments are supported:
   exceed this limit, even if there are available resources. Set to `-1` for
   unlimited.
   Default: `-1`
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
-
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
+* `tags` - (Optional) The IDs of any tags to attach to this resource.
 
 ## Attribute Reference
 
 The only attribute this resource exports is the `id` of the resource, which is
-the [managed object ID][docs-about-morefs] of the resource pool.
+the managed object ID of the resource pool.
 
 ## Importing
 

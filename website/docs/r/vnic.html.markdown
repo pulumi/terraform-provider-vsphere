@@ -13,7 +13,7 @@ Provides a VMware vSphere vnic resource.
 
 ## Example Usages
 
-**Create a vnic attached to a distributed virtual switch using the vmotion TCP/IP stack:**
+### Create a vnic attached to a distributed virtual switch using the vmotion TCP/IP stack
 
 ```hcl
     data "vsphere_datacenter" "dc" {
@@ -52,7 +52,7 @@ Provides a VMware vSphere vnic resource.
     }
 ```
 
-**Create a vnic attached to a portgroup using the default TCP/IP stack:**
+### Create a vnic attached to a portgroup using the default TCP/IP stack
 
 ```hcl
     data "vsphere_datacenter" "dc" {

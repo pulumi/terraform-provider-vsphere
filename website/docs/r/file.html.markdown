@@ -4,13 +4,13 @@ layout: "vsphere"
 page_title: "VMware vSphere: vsphere_file"
 sidebar_current: "docs-vsphere-resource-storage-file"
 description: |-
-  Provides a VMware vSphere virtual machine file resource. This can be used to upload files (e.g. vmdk disks) from the Terraform host machine to a remote vSphere or copy fields within vSphere.
+  Provides a VMware vSphere virtual machine file resource. This can be used to upload files (e.g. vmdk disks) from the host machine to a remote vSphere or copy fields within vSphere.
 ---
 
 # vsphere\_file
 
 The `vsphere_file` resource can be used to upload files (such as virtual disk
-files) from the host machine that Terraform is running on to a target
+files) from the host machine that this provider is running on to a target
 datastore.  The resource can also be used to copy files between datastores, or
 from one location to another on the same datastore.
 
@@ -22,7 +22,7 @@ re-created. Depending on if destination parameters are being changed as well,
 this may result in the destination file either being overwritten or deleted at
 the old location.
 
-## Example Usages
+## Example Usage
 
 ### Uploading a file
 
@@ -51,14 +51,14 @@ resource "vsphere_file" "ubuntu_disk_copy" {
 ## Argument Reference
 
 If `source_datacenter` and `source_datastore` are not provided, the file
-resource will upload the file from the host that Terraform is running on. If
+resource will upload the file from the host that this provider is running on. If
 either `source_datacenter` or `source_datastore` are provided, the resource
 will copy from within specified locations in vSphere.
 
 The following arguments are supported:
 
 * `source_file` - (Required) The path to the file being uploaded from the
-  Terraform host to vSphere or copied within vSphere. Forces a new resource if
+  host to vSphere or copied within vSphere. Forces a new resource if
   changed.
 * `destination_file` - (Required) The path to where the file should be uploaded
   or copied to on vSphere.

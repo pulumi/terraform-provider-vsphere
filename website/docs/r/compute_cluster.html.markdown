@@ -12,14 +12,12 @@ description: |-
 -> **A note on the naming of this resource:** VMware refers to clusters of
 hosts in the UI and documentation as _clusters_, _HA clusters_, or _DRS
 clusters_. All of these refer to the same kind of resource (with the latter two
-referring to specific features of clustering). In Terraform, we use
+referring to specific features of clustering). We use
 `vsphere_compute_cluster` to differentiate host clusters from _datastore
 clusters_, which are clusters of datastores that can be used to distribute load
 and ensure fault tolerance via distribution of virtual machines. Datastore
-clusters can also be managed through Terraform, via the
-[`vsphere_datastore_cluster` resource][docs-r-vsphere-datastore-cluster].
-
-[docs-r-vsphere-datastore-cluster]: /docs/providers/vsphere/r/datastore_cluster.html
+clusters can also be managed through the provider, via the
+`vsphere_datastore_cluster` resource.
 
 The `vsphere_compute_cluster` resource can be used to create and manage
 clusters of hosts allowing for resource control of compute resources, load
@@ -74,7 +72,7 @@ data "vsphere_host" "hosts" {
 }
 
 resource "vsphere_compute_cluster" "compute_cluster" {
-  name            = "terraform-compute-cluster-test"
+  name            = "compute-cluster-test"
   datacenter_id   = "${data.vsphere_datacenter.dc.id}"
   host_system_ids = ["${data.vsphere_host.hosts.*.id}"]
 
@@ -90,38 +88,31 @@ resource "vsphere_compute_cluster" "compute_cluster" {
 The following arguments are supported:
 
 * `name` - (Required) The name of the cluster.
-* `datacenter_id` - (Required) The [managed object ID][docs-about-morefs] of
+* `datacenter_id` - (Required) The managed object ID of
   the datacenter to create the cluster in. Forces a new resource if changed.
 * `folder` - (Optional) The relative path to a folder to put this cluster in.
   This is a path relative to the datacenter you are deploying the cluster to.
   Example: for the `dc1` datacenter, and a provided `folder` of `foo/bar`,
-  Terraform will place a cluster named `terraform-compute-cluster-test` in a
+  The provider will place a cluster named `compute-cluster-test` in a
   host folder located at `/dc1/host/foo/bar`, with the final inventory path
-  being `/dc1/host/foo/bar/terraform-datastore-cluster-test`.
-* `tags` - (Optional) The IDs of any tags to attach to this resource. See
-  [here][docs-applying-tags] for a reference on how to apply tags.
+  being `/dc1/host/foo/bar/datastore-cluster-test`.
+* `tags` - (Optional) The IDs of any tags to attach to this resource.
 
-[docs-about-morefs]: /docs/providers/vsphere/index.html#use-of-managed-object-references-by-the-vsphere-provider
-[docs-applying-tags]: /docs/providers/vsphere/r/tag.html#using-tags-in-a-supported-resource
 
 ~> **NOTE:** Tagging support requires vCenter 6.0 or higher.
 
 * `custom_attributes` - (Optional) A map of custom attribute ids to attribute
-  value strings to set for the datastore cluster. See
-  [here][docs-setting-custom-attributes] for a reference on how to set values
-  for custom attributes.
-
-[docs-setting-custom-attributes]: /docs/providers/vsphere/r/custom_attribute.html#using-custom-attributes-in-a-supported-resource
-
+  value strings to set for the datastore cluster.
+  
 ~> **NOTE:** Custom attributes are unsupported on direct ESXi connections 
 and require vCenter.
 
 ### Host management options
 
 The following settings control cluster membership or tune how hosts are managed
-within the cluster itself by Terraform.
+within the cluster itself by the provider.
 
-* `host_system_ids` - (Optional) The [managed object IDs][docs-about-morefs] of
+* `host_system_ids` - (Optional) The managed object IDs of
   the hosts to put in the cluster.
 * `host_cluster_exit_timeout` - The timeout for each host maintenance mode
   operation when removing hosts from a cluster. The value is specified in
@@ -129,7 +120,7 @@ within the cluster itself by Terraform.
 * `force_evacuate_on_destroy` - When destroying the resource, setting this to
   `true` will auto-remove any hosts that are currently a member of the cluster,
   as if they were removed by taking their entry out of `host_system_ids` (see
-  [below](#how-terraform-removes-hosts-from-clusters)). This is an advanced
+  [below](#removing-hosts-from-clusters)). This is an advanced
   option and should only be used for testing. Default: `false`.
 
 ~> **NOTE:** Do not set `force_evacuate_on_destroy` in production operation as
@@ -139,7 +130,7 @@ your DRS and HA settings, the full host evacuation may fail. Instead,
 incrementally remove hosts from your configuration by adjusting the contents of
 the `host_system_ids` attribute.
 
-#### How Terraform removes hosts from clusters
+#### Removing hosts from clusters
 
 One can remove hosts from clusters by adjusting the
 [`host_system_ids`](#host_system_ids) configuration setting and removing the
@@ -399,7 +390,7 @@ The following settings control specific settings for Admission Control when
 [`ha_admission_control_policy`](#ha_admission_control_policy).
 
 * `ha_admission_control_failover_host_system_ids` - (Optional) Defines the
-  [managed object IDs][docs-about-morefs] of hosts to use as dedicated failover
+  managed object IDs of hosts to use as dedicated failover
   hosts. These hosts are kept as available as possible - admission control will
   block access to the host, and DRS will ignore the host when making
   recommendations.
@@ -461,15 +452,12 @@ details, see the referenced link in the above paragraph.
 
 The following attributes are exported:
 
-* `id`: The [managed object ID][docs-about-morefs] of the cluster.
-* `resource_pool_id` The [managed object ID][docs-about-morefs] of the primary
+* `id`: The managed object ID of the cluster.
+* `resource_pool_id` The managed object ID of the primary
   resource pool for this cluster. This can be passed directly to the
-  [`resource_pool_id`
-  attribute][docs-r-vsphere-virtual-machine-resource-pool-id] of the
-  [`vsphere_virtual_machine`][docs-r-vsphere-virtual-machine] resource.
-
-[docs-r-vsphere-virtual-machine-resource-pool-id]: /docs/providers/vsphere/r/virtual_machine.html#resource_pool_id
-[docs-r-vsphere-virtual-machine]: /docs/providers/vsphere/r/virtual_machine.html
+  `resource_pool_id`
+  attribute of the
+  `vsphere_virtual_machine` resource.
 
 ## Importing
 
