@@ -112,8 +112,16 @@ and require vCenter.
 The following settings control cluster membership or tune how hosts are managed
 within the cluster itself by the provider.
 
+<<<<<<< HEAD
 * `host_system_ids` - (Optional) The managed object IDs of
   the hosts to put in the cluster.
+=======
+* `host_system_ids` - (Optional) The [managed object IDs][docs-about-morefs] of
+  the hosts to put in the cluster. Conflicts with: `host_managed`.
+* `host_managed` - (Optional) Can be set to `true` if compute cluster
+  membership will be managed through the `host` resource rather than the
+  `compute_cluster` resource. Conflicts with: `host_system_ids`.
+>>>>>>> v1.18.3
 * `host_cluster_exit_timeout` - The timeout for each host maintenance mode
   operation when removing hosts from a cluster. The value is specified in
   seconds. Default: `3600` (1 hour).

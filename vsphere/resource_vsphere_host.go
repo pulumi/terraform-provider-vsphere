@@ -37,9 +37,16 @@ func resourceVsphereHost() *schema.Resource {
 				Description: "ID of the vSphere datacenter the host will belong to.",
 			},
 			"cluster": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "ID of the vSphere cluster the host will belong to.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				Description:   "ID of the vSphere cluster the host will belong to.",
+				ConflictsWith: []string{"cluster_managed"},
+			},
+			"cluster_managed": {
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Description:   "Must be set if host is a member of a managed compute_cluster resource.",
+				ConflictsWith: []string{"cluster"},
 			},
 			"hostname": {
 				Type:        schema.TypeString,
@@ -128,7 +135,7 @@ func resourceVsphereHostRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("error while retrieving properties for host %s. Error: %s", hostID, err)
 	}
 
-	if host.Parent != nil && host.Parent.Type == "ClusterComputeResource" {
+	if host.Parent != nil && host.Parent.Type == "ClusterComputeResource" && !d.Get("cluster_managed").(bool) {
 		d.Set("cluster", host.Parent.Value)
 	} else {
 		d.Set("cluster", "")
@@ -395,9 +402,9 @@ func resourceVsphereHostDelete(d *schema.ResourceData, meta interface{}) error {
 
 	if connectionState != types.HostSystemConnectionStateDisconnected {
 		// We cannot put a disconnected server in maintenance mode.
-		err = hostsystem.EnterMaintenanceMode(hs, int(defaultAPITimeout/time.Minute), true)
+		err = resourceVSphereHostDisconnect(d, meta)
 		if err != nil {
-			return fmt.Errorf("error while putting host to maintenance mode: %s", err.Error())
+			return fmt.Errorf("error while disconnecting host: %s", err.Error())
 		}
 	}
 

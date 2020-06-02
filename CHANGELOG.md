@@ -1,3 +1,22 @@
+## 1.18.3 (June 01, 2020)
+
+IMPROVEMENTS:
+* `resource/custom_attribute`: Fix id in error message when category is 
+  missing. ([#1088](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1088))
+* `resource/virtual_machine`: Add vApp properties with OVF deployment. ([#1082](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1082))
+
+## 1.18.2 (May 22, 2020)
+
+IMPROVEMENTS:
+* `resource/host` & `resource/compute_cluster`: Add arguments for specifying 
+  if cluster management should be handled in `host` or `compute_cluster` 
+  resource. ([#1085](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1085))
+* `resource/virtual_machine`: Handle OVF argument validation during VM 
+  creation. ([#1084](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1084))
+* `resource/host`: Disconnect rather than entering maintenance mode when 
+  deleting. ([#1083](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1083)) 
+
+
 ## 1.18.1 (May 12, 2020)
 
 BUG FIXES:
