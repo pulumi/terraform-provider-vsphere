@@ -130,6 +130,7 @@ func Provider() terraform.ResourceProvider {
 			"vsphere_virtual_machine_snapshot":                resourceVSphereVirtualMachineSnapshot(),
 			"vsphere_host":                                    resourceVsphereHost(),
 			"vsphere_vnic":                                    resourceVsphereNic(),
+			"vsphere_vm_storage_policy":                       resourceVmStoragePolicy(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -141,8 +142,10 @@ func Provider() terraform.ResourceProvider {
 			"vsphere_datastore":                  dataSourceVSphereDatastore(),
 			"vsphere_datastore_cluster":          dataSourceVSphereDatastoreCluster(),
 			"vsphere_distributed_virtual_switch": dataSourceVSphereDistributedVirtualSwitch(),
+			"vsphere_dynamic":                    dataSourceVSphereDynamic(),
 			"vsphere_folder":                     dataSourceVSphereFolder(),
 			"vsphere_host":                       dataSourceVSphereHost(),
+			"vsphere_host_pci_device":            dataSourceVSphereHostPciDevice(),
 			"vsphere_network":                    dataSourceVSphereNetwork(),
 			"vsphere_resource_pool":              dataSourceVSphereResourcePool(),
 			"vsphere_storage_policy":             dataSourceVSphereStoragePolicy(),

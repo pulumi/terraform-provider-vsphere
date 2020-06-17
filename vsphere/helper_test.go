@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/terraform-providers/terraform-provider-vsphere/vsphere/internal/helper/contentlibrary"
+	"github.com/terraform-providers/terraform-provider-vsphere/vsphere/internal/helper/spbm"
 	"github.com/vmware/govmomi/vapi/library"
 	"github.com/vmware/govmomi/vapi/rest"
 	"os"
@@ -86,33 +87,33 @@ func testClientVariablesForResource(s *terraform.State, addr string) (testCheckV
 		tagsManager:        tm,
 		resourceID:         rs.Primary.ID,
 		resourceAttributes: rs.Primary.Attributes,
-		esxiHost:           os.Getenv("VSPHERE_ESXI_HOST"),
-		datacenter:         os.Getenv("VSPHERE_DATACENTER"),
+		esxiHost:           os.Getenv("TF_VAR_VSPHERE_NFS_DS_NAME"),
+		datacenter:         os.Getenv("TF_VAR_VSPHERE_DATACENTER"),
 		timeout:            time.Minute * 5,
 	}, nil
 }
 
-// testAccESXiFlagSet returns true if VSPHERE_TEST_ESXI is set.
+// testAccESXiFlagSet returns true if TF_VAR_VSPHERE_TEST_ESXI is set.
 func testAccESXiFlagSet() bool {
-	return os.Getenv("VSPHERE_TEST_ESXI") != ""
+	return os.Getenv("TF_VAR_VSPHERE_TEST_ESXI") != ""
 }
 
-// testAccSkipIfNotEsxi skips a test if VSPHERE_TEST_ESXI is not set.
+// testAccSkipIfNotEsxi skips a test if TF_VAR_VSPHERE_TEST_ESXI is not set.
 func testAccSkipIfNotEsxi(t *testing.T) {
 	if !testAccESXiFlagSet() {
-		t.Skip("set VSPHERE_TEST_ESXI to run ESXi-specific acceptance tests")
+		t.Skip("set TF_VAR_VSPHERE_TEST_ESXI to run ESXi-specific acceptance tests")
 	}
 }
 
-// testAccSkipIfEsxi skips a test if VSPHERE_TEST_ESXI is set.
+// testAccSkipIfEsxi skips a test if TF_VAR_VSPHERE_TEST_ESXI is set.
 func testAccSkipIfEsxi(t *testing.T) {
 	if testAccESXiFlagSet() {
-		t.Skip("test skipped as VSPHERE_TEST_ESXI is set")
+		t.Skip("test skipped as TF_VAR_VSPHERE_TEST_ESXI is set")
 	}
 }
 
 // expectErrorIfNotVirtualCenter returns the error message that
-// viapi.ValidateVirtualCenter returns if VSPHERE_TEST_ESXI is set, to allow for test
+// viapi.ValidateVirtualCenter returns if TF_VAR_VSPHERE_TEST_ESXI is set, to allow for test
 // cases that will still run on ESXi, but will expect validation failure.
 func expectErrorIfNotVirtualCenter() *regexp.Regexp {
 	if testAccESXiFlagSet() {
@@ -1127,4 +1128,67 @@ func testGetDatastoreClusterVMAntiAffinityRule(s *terraform.State, resourceName 
 	}
 
 	return resourceVSphereDatastoreClusterVMAntiAffinityRuleFindEntry(pod, key)
+}
+
+func testGetVmStoragePolicy(s *terraform.State, resourceName string) (string, error) {
+
+	tVars, err := testClientVariablesForResource(s, fmt.Sprintf("vsphere_vm_storage_policy.%s", resourceName))
+	if err != nil {
+		return "", err
+	}
+	policyId, ok := tVars.resourceAttributes["id"]
+	if !ok {
+		return "", fmt.Errorf("resource %q has no id", resourceName)
+	}
+
+	return spbm.PolicyNameByID(tVars.client, policyId)
+}
+
+func RunSweepers() {
+	tagSweep("")
+	dcSweep("")
+}
+
+func tagSweep(r string) error {
+	ctx := context.TODO()
+	client, err := sweepVSphereClient()
+	if err != nil {
+		return err
+	}
+	tm, err := client.TagsManager()
+	if err != nil {
+		return err
+	}
+	cats, err := tm.GetCategories(ctx)
+	if err != nil {
+		return err
+	}
+	for _, cat := range cats {
+		if regexp.MustCompile("save").Match([]byte(cat.Name)) {
+			continue
+		}
+		tm.DeleteCategory(ctx, &cat)
+	}
+	return nil
+}
+
+func dcSweep(r string) error {
+	client, err := sweepVSphereClient()
+	if err != nil {
+		return err
+	}
+	dcs, err := listDatacenters(client.vimClient)
+	if err != nil {
+		return err
+	}
+	for _, dc := range dcs {
+		if regexp.MustCompile("save").Match([]byte(dc.Name())) {
+			continue
+		}
+		_, err := dc.Destroy(context.TODO())
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -1,3 +1,14 @@
+## 1.19.0 (June 16, 2020)
+
+FEATURES:
+* `data/dynamic`: Data source which can be used to match any tagged managed object. ([#1103](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1103))
+* `resource/vm_storage_policy_profile`: A resource for tag based storage placement.
+  policies management. ([#1094](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1094))
+* `resource/virtual_machine`: Add support for PCI passthrough devices on virtual
+  machines. ([#1099](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1099))
+* `data/host_pci_device`: Data source which will locate the address of a PCI
+  device on a host. ([#1099](https://github.com/terraform-providers/terraform-provider-vsphere/pull/1099))
+
 ## 1.18.3 (June 01, 2020)
 
 IMPROVEMENTS:
