@@ -92,7 +92,7 @@ Two waiters of note are:
 ### Creating a virtual machine from scratch
 
 The following block contains all that is necessary to create a new virtual
-machine, with a single disk and network interface. 
+machine, with a single disk and network interface.
 
 The resource makes use of the following data sources to do its job:
 `vsphere_datacenter` to locate the datacenter,
@@ -220,18 +220,21 @@ resource "vsphere_virtual_machine" "vm" {
   }
 }
 ```
+### Deploying VM from an OVF/OVA template
 
-### Deploying VM from an OVF template
-OVF templates can be deployed both from local system and remote URL into the 
-vcenter using the `ovf_deploy` property. When deploying from local system, the 
-path to the .ovf template needs to be given and all other necessary files like .vmdk 
-files also should be present in the same directory as the .ovf file. While deploying, 
-the VM properties like `name`, `datacenter_id`, `resource_pool_id`, `datastore_id`, 
-`host_system_id`, `folder`, `vapp` can only be set. All other VM properties are taken from the OVF 
+Ovf and ova templates can be deployed both from local system and remote URL into the
+vcenter using the `ovf_deploy` property. When deploying from local system, the
+path to the ovf or ova template needs to be provided. While deploying ovf, all other
+necessary files like vmdk files also should be present in the same directory as the ovf file.
+While deploying, the VM properties like `name`, `datacenter_id`, `resource_pool_id`, `datastore_id`,
+`host_system_id`, `folder`, `scsi_controller_count`, `vapp` can only be set. All other VM properties are taken from the ovf
 template and setting them in the configuration file is redundant.
 
-~> **NOTE:** Only the vApp properties which are pre-defined in the OVF template can be overwritten. 
+~> **NOTE:** Only the vApp properties which are pre-defined in the ovf template can be overwritten.
 vApp properties from scratch cannot be created.
+
+~> **NOTE:** ovf deployment requires vCenter and is not supported on direct ESXi
+connections.
 
 ```hcl
 data "vsphere_datacenter" "dc" {
@@ -250,19 +253,31 @@ data "vsphere_resource_pool" "pool" {
 
 data "vsphere_host" "host" {
   name          = "hostip"
-  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "network" {
+  name          = "VM Network"
+  datacenter_id = data.vsphere_datacenter.datacenter.id
 }
 
 resource "vsphere_virtual_machine" "vmFromLocalOvf" {
   name = "vm1"
-  resource_pool_id = data.vsphere_resource_pool.pool.id
-  datastore_id = data.vsphere_datastore.datastore.id
-  host_system_id = data.vsphere_host.host.id
+  resource_pool_id           = data.vsphere_resource_pool.pool.id
+  datastore_id               = data.vsphere_datastore.datastore.id
+  host_system_id             = data.vsphere_host.host.id
   wait_for_guest_net_timeout = 0
-  wait_for_guest_ip_timeout = 0
-  datacenter_id = data.vsphere_datacenter.dc.id
+  wait_for_guest_ip_timeout  = 0
+  datacenter_id              = data.vsphere_datacenter.dc.id
   ovf_deploy {
-    local_ovf_path = "Full Path to local OVF template file"
+    local_ovf_path       = "Full Path to local ovf/ova file"
+    disk_provisioning    = "thin"
+    ip_protocol          = "IPV4"
+    ip_allocation_policy = "STATIC_MANUAL"
+    ovf_network_map      = {
+                "ESX-port-1" = data.vsphere_network.network.id
+                "ESX-port-2" = data.vsphere_network.network.id
+               }
   }
   vapp {
       properties = {
@@ -272,15 +287,16 @@ resource "vsphere_virtual_machine" "vmFromLocalOvf" {
 }
 
 resource "vsphere_virtual_machine" "vmFromRemoteOvf" {
-  name = "vm2"
-  resource_pool_id = data.vsphere_resource_pool.pool.id
-  datastore_id = data.vsphere_datastore.datastore.id
-  host_system_id = data.vsphere_host.host.id
+  name                       = "vm2"
+  resource_pool_id           = data.vsphere_resource_pool.pool.id
+  datastore_id               = data.vsphere_datastore.datastore.id
+  host_system_id             = data.vsphere_host.host.id
   wait_for_guest_net_timeout = 0
-  wait_for_guest_ip_timeout = 0
-  datacenter_id = data.vsphere_datacenter.dc.id
+  wait_for_guest_ip_timeout  = 0
+  datacenter_id              = data.vsphere_datacenter.dc.id
   ovf_deploy {
-    remote_ovf_url = "Url to remote ovf file"
+    // Url to remote ovf/ova file
+    remote_ovf_url = "https://download3.vmware.com/software/vmw-tools/nested-esxi/Nested_ESXi7.0_Appliance_Template_v1.ova"
   }
 }
 ```
@@ -454,7 +470,7 @@ a cluster or standalone host resource directly.
 ~> **NOTE:** One of `datastore_id` or `datastore_cluster_id` must be specified.
 
 ~> **NOTE:** Use of `datastore_cluster_id` requires Storage DRS to be enabled
-on that cluster. 
+on that cluster.
 
 ~> **NOTE:** The `datastore_cluster_id` setting applies to the entire virtual
 machine - you cannot assign individual datastore clusters to individual disks.
@@ -470,7 +486,7 @@ external disks on virtual machines that are assigned to datastore clusters.
   section on [virtual machine migration](#virtual-machine-migration) for
   details on changing this value. If a `host_system_id` is not supplied,
   vSphere will select a host in the resource pool to place the virtual machine,
-  according to any defaults or DRS policies in place. 
+  according to any defaults or DRS policies in place.
 * `disk` - (Required) A specification for a virtual disk device on this virtual
   machine. See [disk options](#disk-options) below.
 * `network_interface` - (Required) A specification for a virtual NIC on this
@@ -486,17 +502,17 @@ external disks on virtual machines that are assigned to datastore clusters.
    is from 4 to 15. The hardware version cannot be downgraded. See [virtual
    machine hardware compatibility][virtual-machine-hardware-compatibility] for
    more details.
- * `pci_device_id` - (Optional) List of host PCI device IDs to create PCI 
+ * `pci_device_id` - (Optional) List of host PCI device IDs to create PCI
    passthroughs for.
-   
+
 [virtual-machine-hardware-compatibility]: https://kb.vmware.com/s/article/2007240
 
 ~> **NOTE:** Cloning requires vCenter and is not supported on direct ESXi
 connections.
 
 * `ovf_deploy` - (Optional) When specified, the VM will be deployed from the
-   provided ovf template. See [creating a virtual machine from a 
-   ovf template](#creating-vm-from-deploying-a-ovf-template) for more details.
+   provided ovf/ova template. See [creating a virtual machine from a
+   ovf/ova template](#creating-vm-from-deploying-a-ovf-ova-template) for more details.
 * `vapp` - (Optional) Optional vApp configuration. The only sub-key available
   is `properties`, which is a key/value map of properties for virtual machines
   imported from OVF or OVA files. See [Using vApp properties to supply OVF/OVA
@@ -528,15 +544,15 @@ configuration](#using-vapp-properties-to-supply-ovf-ova-configuration).
   pvscsi (VMware Paravirtual). Defualt: `pvscsi`.
 * `scsi_bus_sharing` - (Optional) Mode for sharing the SCSI bus. The modes are
   physicalSharing, virtualSharing, and noSharing. Default: `noSharing`.
-* `tags` - (Optional) The IDs of any tags to attach to this resource. 
+* `tags` - (Optional) The IDs of any tags to attach to this resource.
 
 ~> **NOTE:** Tagging support is unsupported on direct ESXi connections and
 requires vCenter 6.0 or higher.
 
 * `custom_attributes` - (Optional) Map of custom attribute ids to attribute
-  value strings to set for virtual machine. 
-  
-~> **NOTE:** Custom attributes are unsupported on direct ESXi connections 
+  value strings to set for virtual machine.
+
+~> **NOTE:** Custom attributes are unsupported on direct ESXi connections
 and require vCenter.
 
 * `storage_policy_id` - (Optional) The UUID of the storage policy to assign to VM home directory.
@@ -569,7 +585,7 @@ settings, so if you want the support, enable it as soon as possible.
 
 [vmware-docs-compat-guide]: http://partnerweb.vmware.com/comp_guide2/pdf/VMware_GOS_Compatibility_Guide.pdf
 
-### Boot options 
+### Boot options
 
 The following options control boot settings on the virtual machine:
 
@@ -728,7 +744,7 @@ resource "vsphere_virtual_machine" "vm" {
     label = "disk0"
     size  = "10"
   }
-  
+
   disk {
     label       = "disk1"
     size        = "100"
@@ -751,7 +767,7 @@ machine.
 ~> **NOTE:** Do not choose a label that starts with `orphaned_disk_` (example:
 `orphaned_disk_0`), as this prefix is reserved for disks that this provider does
 not recognize, such as disks that are attached externally. The provider will issue
-an error if you try to label a disk with this prefix. 
+an error if you try to label a disk with this prefix.
 
 * `name` - (Optional) An alias for both `label` and `path`, the latter when
   using `attach`. Required if not using `label`.
@@ -808,7 +824,7 @@ externally with `attach` when the `path` field is not specified.
 * `thin_provisioned` - (Optional) If `true`, this disk is thin provisioned,
   with space for the file being allocated on an as-needed basis. Cannot be set
   to `true` when `eagerly_scrub` is `true`. See the section on [picking a disk
-  type](#picking-a-disk-type). Default: `true`. 
+  type](#picking-a-disk-type). Default: `true`.
 * `disk_sharing` - (Optional) The sharing mode of this virtual disk. Can be one
   of `sharingMultiWriter` or `sharingNone`. Default: `sharingNone`.
 
@@ -1046,7 +1062,7 @@ resource "vsphere_virtual_machine" "vm" {
         ipv4_address = "10.0.0.10"
         ipv4_netmask = 24
       }
-      
+
       network_interface {
         ipv4_address = "172.16.0.10"
         ipv4_netmask = 24
@@ -1141,7 +1157,7 @@ Windows systems, this is done per-interface, see [network interface
 settings](#network-interface-settings).
 
 * `dns_server_list` - The list of DNS servers to configure on a virtual
-  machine. 
+  machine.
 * `dns_suffix_list` - A list of DNS search domains to add to the DNS
   configuration on the virtual machine.
 
@@ -1286,34 +1302,33 @@ resource "vsphere_virtual_machine" "vm" {
 Note this option is mutually exclusive to `windows_options` - one must not be
 included if the other is specified.
 
-### Creating VM from deploying a OVF template
+### Creating VM from deploying a OVF/OVA template
 
-The `ovf_deploy` block can be used to create a new virtual machine from an OVF
-template either from local system or remote URL. While deploying from OVF, the VM
-properties are taken from OVF and setting them in configuration file is not necessary.
+The `ovf_deploy` block can be used to create a new virtual machine from an ovf/ova
+template either from local system or remote URL. While deploying, the VM
+properties are taken from ovf and setting them in configuration file is not necessary.
 
-See the [Deploying from OVF example](#deploying-vm-from-an-ovf-template) for a usage synopsis.
+See the [Deploying from OVF example](#deploying-vm-from-an-ovf-ova-template) for a usage synopsis.
 
 ~> **NOTE:** Changing any option in `ovf_deploy` after creation forces a new
 resource.
 
-~> **NOTE:** ovf deployment requires vCenter and is not supported on direct ESXi
-connections.
-
 The options available in the `ovf_deploy` block are:
 
-* `local_ovf_path` - (Optional) The absolute path to the ovf file in the local system. Make sure the 
-   other necessary files like the .vmdk files are also in the same directory as the given ovf file.
-* `remote_ovf_url` - (Optional) URL to the remote ovf file to be deployed.
+* `local_ovf_path` - (Optional) The absolute path to the ovf/ova file in the local system. While deploying from ovf,
+   make sure the other necessary files like the .vmdk files are also in the same directory as the given ovf file.
+* `remote_ovf_url` - (Optional) URL to the remote ovf/ova file to be deployed.
 
 ~> **NOTE:** Either `local_ovf_path` or `remote_ovf_url` is required, both can't be empty.
 
 * `ip_allocation_policy` - (Optional) The IP allocation policy.
 * `ip_protocol` - (Optional) The IP protocol.
-* `disk_provisioning` - (Optional) The disk provisioning. If set, all the disks in the deployed OVF will have 
-   the same specified disk type (e.g., thin provisioned).
-* `ovf_network_map` - (Optional) The mapping of name of network identifiers from the ovf descriptor to network UUID in the 
+* `disk_provisioning` - (Optional) The disk provisioning. If set, all the disks in the deployed OVF will have
+   the same specified disk type (accepted values {thin, flat, thick, sameAsSource}).
+* `ovf_network_map` - (Optional) The mapping of name of network identifiers from the ovf descriptor to network UUID in the
    VI infrastructure.
+* `allow_unverified_ssl_cert` - (Optional) Allow unverified ssl certificates while deploying ovf/ova from url.
+   Defaults true.   
 
 ### Using vApp properties to supply OVF/OVA configuration
 
@@ -1322,7 +1337,7 @@ Alternative to the settings in `customize`, one can use the settings in the
 a virtual machine cloned from a template that came from an imported OVF or OVA
 file. Both GuestInfo and ISO transport methods are supported. For templates
 that use ISO transport, a CDROM backed by client device is required. See [CDROM
-options](#cdrom-options) for details. 
+options](#cdrom-options) for details.
 
 ~> **NOTE:** The only supported usage path for vApp properties is for existing
 user-configurable keys. These generally come from an existing template that was
@@ -1389,7 +1404,7 @@ as vMotion) both on the host and storage level. One can migrate the entire VM
 to another host, cluster, resource pool, or datastore, and migrate or pin a
 single disk to a specific datastore.
 
-### Host, cluster, and resource pool migration 
+### Host, cluster, and resource pool migration
 
 To migrate the virtual machine to another host or resource pool, change the
 `host_system_id` or `resource_pool_id` to the manged object IDs of the new host
@@ -1436,7 +1451,7 @@ resource "vsphere_virtual_machine" "vm" {
     label = "disk0"
     size  = 10
   }
-  
+
   disk {
     datastore_id = "${data.vsphere_datastore.pinned_datastore.id}"
     label        = "disk1"
@@ -1493,7 +1508,7 @@ The following attributes are exported on the base level of this resource:
   machines. A list of vApp transport methods supported by the source virtual
   machine or template.
 
-## Importing 
+## Importing
 
 An existing virtual machine can be [imported][docs-import] into this resource
 via supplying the full path to the virtual machine. An example is below:
@@ -1541,7 +1556,7 @@ comprising of:
 
 * The [`imported`](#imported) flag will transition from `true` to `false`.
 * [`keep_on_remove`](#keep_on_remove) of known disks will transition from
-  `true` to `false`. 
+  `true` to `false`.
 * Configuration supplied in the [`clone`](#clone) block, if present, will be
   persisted to state. This initial persistence operation does not perform any
   cloning or customization actions, nor does it force a new resource. After the
