@@ -131,6 +131,8 @@ func Provider() terraform.ResourceProvider {
 			"vsphere_host":                                    resourceVsphereHost(),
 			"vsphere_vnic":                                    resourceVsphereNic(),
 			"vsphere_vm_storage_policy":                       resourceVmStoragePolicy(),
+			"vsphere_role":                                    resourceVsphereRole(),
+			"vsphere_entity_permissions":                      resourceVsphereEntityPermissions(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
@@ -146,6 +148,7 @@ func Provider() terraform.ResourceProvider {
 			"vsphere_folder":                     dataSourceVSphereFolder(),
 			"vsphere_host":                       dataSourceVSphereHost(),
 			"vsphere_host_pci_device":            dataSourceVSphereHostPciDevice(),
+			"vsphere_host_thumbprint":            dataSourceVSphereHostThumbprint(),
 			"vsphere_network":                    dataSourceVSphereNetwork(),
 			"vsphere_resource_pool":              dataSourceVSphereResourcePool(),
 			"vsphere_storage_policy":             dataSourceVSphereStoragePolicy(),
@@ -154,6 +157,7 @@ func Provider() terraform.ResourceProvider {
 			"vsphere_vapp_container":             dataSourceVSphereVAppContainer(),
 			"vsphere_virtual_machine":            dataSourceVSphereVirtualMachine(),
 			"vsphere_vmfs_disks":                 dataSourceVSphereVmfsDisks(),
+			"vsphere_role":                       dataSourceVsphereRole(),
 		},
 
 		ConfigureFunc: providerConfigure,
