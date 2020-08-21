@@ -1036,7 +1036,7 @@ func DiskPostCloneOperation(d *schema.ResourceData, c *govmomi.Client, l object.
 			//
 			// TODO: Remove "name" after 2.0.
 			switch k {
-			case "label", "path", "name", "datastore_id", "uuid":
+			case "label", "path", "name", "datastore_id", "uuid", "thin_provisioned", "eagerly_scrub":
 				continue
 			case "io_share_count":
 				if src["io_share_level"] != string(types.SharesLevelCustom) {
@@ -1186,9 +1186,17 @@ func ReadDiskAttrsForDataSource(l object.VirtualDeviceList, d *schema.ResourceDa
 		if backing.ThinProvisioned != nil {
 			thin = *backing.ThinProvisioned
 		}
+		if di, ok := disk.DeviceInfo.(*types.Description); ok {
+			m["label"] = di.Label
+		} else {
+			m["label"] = fmt.Sprintf("Disk %d", i)
+		}
+
 		m["size"] = diskCapacityInGiB(disk)
 		m["eagerly_scrub"] = eager
 		m["thin_provisioned"] = thin
+		m["unit_number"] = disk.UnitNumber
+
 		out = append(out, m)
 	}
 	log.Printf("[DEBUG] ReadDiskAttrsForDataSource: Attributes returned: %+v", out)
