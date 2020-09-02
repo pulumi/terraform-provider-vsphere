@@ -4,7 +4,7 @@ layout: "vsphere"
 page_title: "VMware vSphere: vsphere_content_library"
 sidebar_current: "docs-vsphere-resource-content-library"
 description: |-
-  Provides a VMware Content Library. Content libraries allow users to manage and share deployable content such as 
+  Provides a VMware Content Library. Content libraries allow users to manage and share deployable content such as
   virtual machines and vApps.
 ---
 
@@ -44,12 +44,25 @@ The following arguments are supported:
 * `storage_backing` - (Required) The managed object reference ID on which to store Content Library
   items.
 * `description` - (Optional) A description of the Content Library.
+* `publication` - (Optional) Options to publish a local Content Library.
+  * `authentication_method` - (Optional) Method to authenticate users. Must be `NONE` or `BASIC`.
+  * `username` - (Optional) User name subscribers log in with. Currently can only be `vcsp`.
+  * `password` - (Optional) Password subscribers log in with.
+  * `published` - (Optional) Bool determining if Content Library is published.
+* `subscription` - (Optional) Options to publish a local Content Library.
+  * `subscription_url` - (Required) URL of remote Content Library.
+  * `authentication_method` - (Optional) Method to log into remote Content Library. Must be `NONE` or `BASIC`.
+  * `username` - (Optional) User name to log in with.
+  * `password` - (Optional) Password to log in with.
+  * `automatic_sync` - (Optional) Enable automatic synchronization with the external content library.
+  * `on_demand` - (Optional) Download all library content immediately.
 
 ## Attribute Reference
 
-The only attribute this resource exports is the `id` of the resource, which is
-a combination of the managed object reference ID of the
-cluster, and the name of the virtual machine group.
+
+* `id` The ID of the Content Library, and the name of the virtual machine group.
+* `subscription`
+  * `publish_url` - URL to remotely access the published Content Library.
 
 ## Importing
 
