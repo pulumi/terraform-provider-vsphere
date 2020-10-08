@@ -91,7 +91,7 @@ func schemaVMwareDVSPortSetting() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			Optional:    true,
 			Computed:    true,
-			Description: "List of active uplinks used for load balancing, matching the names of the uplinks assigned in the DVS.",
+			Description: "List of standby uplinks used for load balancing, matching the names of the uplinks assigned in the DVS.",
 			Elem:        &schema.Schema{Type: schema.TypeString},
 		},
 
@@ -556,7 +556,11 @@ func flattenDVSTrafficShapingPolicyEgress(d *schema.ResourceData, obj *types.DVS
 
 // expandVMwareDVSPortSetting reads certain ResourceData keys and
 // returns a VMwareDVSPortSetting.
-func expandVMwareDVSPortSetting(d *schema.ResourceData) *types.VMwareDVSPortSetting {
+func expandVMwareDVSPortSetting(d *schema.ResourceData, resourceType string) *types.VMwareDVSPortSetting {
+	var lacpPolicy *types.VMwareUplinkLacpPolicy = nil
+	if resourceType == "distributed_virtual_switch" {
+		lacpPolicy = expandVMwareUplinkLacpPolicy(d)
+	}
 	obj := &types.VMwareDVSPortSetting{
 		DVPortSetting: types.DVPortSetting{
 			Blocked:                 structure.GetBoolPolicy(d, "block_all_ports"),
@@ -569,7 +573,7 @@ func expandVMwareDVSPortSetting(d *schema.ResourceData) *types.VMwareDVSPortSett
 		SecurityPolicy:      expandDVSSecurityPolicy(d),
 		IpfixEnabled:        structure.GetBoolPolicy(d, "netflow_enabled"),
 		TxUplink:            structure.GetBoolPolicy(d, "tx_uplink"),
-		LacpPolicy:          expandVMwareUplinkLacpPolicy(d),
+		LacpPolicy:          lacpPolicy,
 	}
 
 	if structure.AllFieldsEmpty(obj) {

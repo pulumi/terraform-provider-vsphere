@@ -127,9 +127,9 @@ The following arguments are supported:
   if changed.
 * `description` - (Optional) A detailed description for the DVS.
 * `contact_name` - (Optional) The name of the person who is responsible for the
-  DVS. 
+  DVS.
 * `contact_detail` - (Optional) The detailed contact information for the person
-  who is responsible for the DVS. 
+  who is responsible for the DVS.
 * `ipv4_address` - (Optional) An IPv4 address to identify the switch. This is
   mostly useful when used with the [Netflow arguments](#netflow-arguments) found
   below.
@@ -153,9 +153,9 @@ The following arguments are supported:
 ~> **NOTE:** Tagging support requires vCenter 6.0 or higher.
 
 * `custom_attributes` - (Optional) Map of custom attribute ids to attribute
-  value strings to set for virtual switch. 
-  
-~> **NOTE:** Custom attributes are unsupported on direct ESXi connections 
+  value strings to set for virtual switch.
+
+~> **NOTE:** Custom attributes are unsupported on direct ESXi connections
 and require vCenter.
 
 ### Uplink arguments
@@ -175,6 +175,19 @@ and require vCenter.
  * `devices` - (Required) The list of NIC devices to map to uplinks on the DVS,
    added in order they are specified.
 
+### Private VLAN mapping arguments
+
+* `ignore_other_pvlan_mappings` - (Optional) Whether to ignore existing PVLAN
+  mappings not managed by this resource. Defaults to false.
+* `pvlan_mapping` - (Optional) Use the `pvlan_mapping` block to declare a
+  private VLAN mapping. The options are:
+ * `primary_vlan_id` - (Required) The primary VLAN ID. The VLAN IDs of 0 and
+   4095 are reserved and cannot be used in this property.
+ * `secondary_vlan_id` - (Required) The secondary VLAN ID. The VLAN IDs of 0
+   and 4095 are reserved and cannot be used in this property.
+ * `pvlan_type` - (Required) The private VLAN type. Valid values are
+   promiscuous, community and isolated.
+
 ### Netflow arguments
 
 The following options control settings that you can use to configure Netflow on
@@ -182,7 +195,7 @@ the DVS:
 
 * `netflow_active_flow_timeout` - (Optional) The number of seconds after which
   active flows are forced to be exported to the collector. Allowed range is
-  `60` to `3600`. Default: `60`. 
+  `60` to `3600`. Default: `60`.
 * `netflow_collector_ip_address` - (Optional) IP address for the Netflow
   collector, using IPv4 or IPv6. IPv6 is supported in vSphere Distributed
   Switch Version 6.0 or later. Must be set before Netflow can be enabled.
