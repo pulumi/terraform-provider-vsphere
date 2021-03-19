@@ -91,6 +91,12 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("VSPHERE_VIM_KEEP_ALIVE", 10),
 				Description: "Keep alive interval for the VIM session in minutes",
 			},
+			"api_timeout": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("VSPHERE_API_TIMEOUT", 5),
+				Description: "API timeout in minutes (Default: 5)",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -150,6 +156,7 @@ func Provider() terraform.ResourceProvider {
 			"vsphere_host_pci_device":            dataSourceVSphereHostPciDevice(),
 			"vsphere_host_thumbprint":            dataSourceVSphereHostThumbprint(),
 			"vsphere_network":                    dataSourceVSphereNetwork(),
+			"vsphere_ovf_vm_template":            dataSourceVSphereOvfVMTemplate(),
 			"vsphere_resource_pool":              dataSourceVSphereResourcePool(),
 			"vsphere_storage_policy":             dataSourceVSphereStoragePolicy(),
 			"vsphere_tag":                        dataSourceVSphereTag(),

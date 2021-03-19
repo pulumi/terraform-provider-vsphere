@@ -1,7 +1,27 @@
+## 1.25.0 (March 17, 2021)
+
+BUG FIXES:
+* `resource/vsphere_entity_permissions`: Sorting permission objects on username/groupname before storing. ([#1311](https://github.com/hashicorp/terraform-provider-vsphere/pull/1311))
+* `resource/vm`: Limit netmask length for ipv4 and ipv6 netmasks. ([#1321](https://github.com/hashicorp/terraform-provider-vsphere/pull/1321))
+* `resource/vm`: Fix missing vApp properties. ([#1322](https://github.com/hashicorp/terraform-provider-vsphere/pull/1322))
+
+FEATURES:
+* `data/vsphere_ovf_vm_template`: Created data source OVF VM Template. This new data source allows `vsphere_virtual_machine` to be created by its exported attributes. See PR for more details. ([#1339](https://github.com/hashicorp/terraform-provider-vsphere/pull/1339))
+
+IMPROVEMENTS:
+* `resource/distributed_virtual_switch`: Allow vsphere 7. ([#1363](https://github.com/hashicorp/terraform-provider-vsphere/pull/1363))
+* `provider`: Bump Go to version 1.16. ([#1365](https://github.com/hashicorp/terraform-provider-vsphere/pull/1365))
+
+## 1.24.3 (December 14, 2020)
+
+BUG FIXES:
+* `resource/vm`: Support for no disks in config ([#1241](https://github.com/hashicorp/terraform-provider-vsphere/pull/1241))
+* `resource/vm`: Make API timeout configurable when building VMs ([#1278](https://github.com/hashicorp/terraform-provider-vsphere/pull/1278))
+
 ## 1.24.2 (October 16, 2020)
 
 BUG FIXES:
-* `resource/vm`: Prevent guest_id nil condition. ([#1203](https://github.com/hashicorp/terraform-provider-vsphere/pull/1234))
+* `resource/vm`: Prevent guest_id nil condition. ([#1234](https://github.com/hashicorp/terraform-provider-vsphere/pull/1234))
 
 ## 1.24.1 (October 07, 2020)
 
