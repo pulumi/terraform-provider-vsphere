@@ -9,11 +9,11 @@ import (
 
 	"github.com/hashicorp/terraform-provider-vsphere/vsphere/internal/helper/testhelper"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-const ENTITY_PERMISSION_RESOURCE = "entity_permission1"
+const EntityPermissionResource = "entity_permission1"
 
 func TestAccResourcevsphereEntityPermissions_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
@@ -28,9 +28,9 @@ func TestAccResourcevsphereEntityPermissions_basic(t *testing.T) {
 				Config: testAccResourceVsphereEntityPermissionsConfigBasic(),
 				Check: resource.ComposeTestCheckFunc(
 					testAccResourceEntityPermissionsCheckExists(true),
-					resource.TestCheckResourceAttrSet("vsphere_entity_permissions."+ENTITY_PERMISSION_RESOURCE, "permissions.0.user_or_group"),
-					resource.TestCheckResourceAttr("vsphere_entity_permissions."+ENTITY_PERMISSION_RESOURCE, "permissions.0.propagate", "true"),
-					resource.TestCheckResourceAttr("vsphere_entity_permissions."+ENTITY_PERMISSION_RESOURCE, "permissions.0.is_group", "true"),
+					resource.TestCheckResourceAttrSet("vsphere_entity_permissions."+EntityPermissionResource, "permissions.0.user_or_group"),
+					resource.TestCheckResourceAttr("vsphere_entity_permissions."+EntityPermissionResource, "permissions.0.propagate", "true"),
+					resource.TestCheckResourceAttr("vsphere_entity_permissions."+EntityPermissionResource, "permissions.0.is_group", "true"),
 				),
 			},
 		},
@@ -45,7 +45,7 @@ func testAccResourceVSphereEntityPermissionsPreCheck(t *testing.T) {
 
 func testAccResourceEntityPermissionsCheckExists(expected bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		_, err := testGetVsphereEntityPermission(s, ENTITY_PERMISSION_RESOURCE)
+		_, err := testGetVsphereEntityPermission(s, EntityPermissionResource)
 		if err != nil {
 			if strings.Contains(err.Error(), "permissions not found") && !expected {
 				// Expected missing
@@ -86,7 +86,7 @@ func testAccResourceVsphereEntityPermissionsConfigBasic() string {
 `,
 		testhelper.ConfigDataRootDC1(),
 		os.Getenv("TF_VAR_VSPHERE_VM_V1_PATH"),
-		ENTITY_PERMISSION_RESOURCE,
+		EntityPermissionResource,
 		os.Getenv("TF_VAR_VSPHERE_ENTITY_PERMISSION_USER_GROUP"),
 	)
 }

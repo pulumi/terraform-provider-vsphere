@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-provider-vsphere/vsphere/internal/helper/testhelper"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/hashicorp/terraform-provider-vsphere/vsphere/internal/helper/viapi"
 	"github.com/vmware/govmomi/vim25/types"
 )
@@ -17,7 +16,7 @@ func TestAccResourceVSphereDistributedPortGroup_basic(t *testing.T) {
 		PreCheck: func() {
 			RunSweepers()
 			testAccPreCheck(t)
-			testAccResourceVSphereDistributedPortGroupPreCheck(t)
+			testAccResourceVSphereDistributedPortGroupPreCheck()
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccResourceVSphereDistributedPortGroupExists(false),
@@ -54,7 +53,7 @@ func TestAccResourceVSphereDistributedPortGroup_inheritPolicyDiffCheck(t *testin
 		PreCheck: func() {
 			RunSweepers()
 			testAccPreCheck(t)
-			testAccResourceVSphereDistributedPortGroupPreCheck(t)
+			testAccResourceVSphereDistributedPortGroupPreCheck()
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccResourceVSphereDistributedPortGroupExists(false),
@@ -74,7 +73,7 @@ func TestAccResourceVSphereDistributedPortGroup_inheritPolicyDiffCheckVlanRangeT
 		PreCheck: func() {
 			RunSweepers()
 			testAccPreCheck(t)
-			testAccResourceVSphereDistributedPortGroupPreCheck(t)
+			testAccResourceVSphereDistributedPortGroupPreCheck()
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccResourceVSphereDistributedPortGroupExists(false),
@@ -94,7 +93,7 @@ func TestAccResourceVSphereDistributedPortGroup_overrideVlan(t *testing.T) {
 		PreCheck: func() {
 			RunSweepers()
 			testAccPreCheck(t)
-			testAccResourceVSphereDistributedPortGroupPreCheck(t)
+			testAccResourceVSphereDistributedPortGroupPreCheck()
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccResourceVSphereDistributedPortGroupExists(false),
@@ -116,7 +115,7 @@ func TestAccResourceVSphereDistributedPortGroup_singleTag(t *testing.T) {
 		PreCheck: func() {
 			RunSweepers()
 			testAccPreCheck(t)
-			testAccResourceVSphereDistributedPortGroupPreCheck(t)
+			testAccResourceVSphereDistributedPortGroupPreCheck()
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccResourceVSphereDistributedPortGroupExists(false),
@@ -137,7 +136,7 @@ func TestAccResourceVSphereDistributedPortGroup_multiTag(t *testing.T) {
 		PreCheck: func() {
 			RunSweepers()
 			testAccPreCheck(t)
-			testAccResourceVSphereDistributedPortGroupPreCheck(t)
+			testAccResourceVSphereDistributedPortGroupPreCheck()
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccResourceVSphereDistributedPortGroupExists(false),
@@ -158,7 +157,7 @@ func TestAccResourceVSphereDistributedPortGroup_singleCustomAttribute(t *testing
 		PreCheck: func() {
 			RunSweepers()
 			testAccPreCheck(t)
-			testAccResourceVSphereDistributedPortGroupPreCheck(t)
+			testAccResourceVSphereDistributedPortGroupPreCheck()
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccResourceVSphereDistributedPortGroupExists(false),
@@ -179,7 +178,7 @@ func TestAccResourceVSphereDistributedPortGroup_multiCustomAttribute(t *testing.
 		PreCheck: func() {
 			RunSweepers()
 			testAccPreCheck(t)
-			testAccResourceVSphereDistributedPortGroupPreCheck(t)
+			testAccResourceVSphereDistributedPortGroupPreCheck()
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testAccResourceVSphereDistributedPortGroupExists(false),
@@ -202,7 +201,7 @@ func TestAccResourceVSphereDistributedPortGroup_multiCustomAttribute(t *testing.
 	})
 }
 
-func testAccResourceVSphereDistributedPortGroupPreCheck(t *testing.T) {
+func testAccResourceVSphereDistributedPortGroupPreCheck() {
 }
 
 func testAccResourceVSphereDistributedPortGroupExists(expected bool) resource.TestCheckFunc {
@@ -249,7 +248,7 @@ func testAccResourceVSphereDistributedPortGroupCheckTags(tagResName string) reso
 		if err != nil {
 			return err
 		}
-		tagsClient, err := testAccProvider.Meta().(*VSphereClient).TagsManager()
+		tagsClient, err := testAccProvider.Meta().(*Client).TagsManager()
 		if err != nil {
 			return err
 		}
